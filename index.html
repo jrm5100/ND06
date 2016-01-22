@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overview of MLB History</title>
+  <!-- Style and JS -->
+  <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+  <!-- D3 -->
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <!-- Material Design Lite -->
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+  <!-- Material Design icon font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <!-- The drawer is always open in large screens. The header is always shown,
+    even in small screens. -->
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
+    mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <div class="mdl-layout-spacer"></div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+        mdl-textfield--floating-label mdl-textfield--align-right">
+      </div>
+    </div>
+  </header>
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">Teams</span>
+    <nav class="mdl-navigation"></nav>
+  </div>
+
+  <main class="mdl-layout__content">
+    <div class="mdl-grid", id="grid">
+      <!-- Divs with D3 visualization -->
+      <div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"><svg></svg>
+      	<div>
+         <button class ="mdl-button mdl-js-button mdl-button--colored mdl-button--raised" id="show_unselected-teams-button">Show Unselected Teams</button>
+         <button class ="mdl-button mdl-js-button mdl-button--colored mdl-button--raised" id="Graph1_ystat">Graph1_ystat</button>
+       </div>
+     </div>
+     <div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col"><svg></svg>
+       <div>
+         <button id="Graph2-xStat-Selection">Graph2 xStat Dropdown</button>
+         <button id="Graph2-yStat-Selection">Graph2 yStat Dropdown</button>
+       </div>
+     </div>
+
+     <div id="yearinfo" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col">
+       <p>
+         <!-- Year Navigation Buttons -->
+         <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+          <i id ="year-down-10" class="material-icons">arrow_back</i>
+        </button>
+
+        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+          <i id ="year-down-1" class="material-icons">chevron_left</i>
+        </button>
+
+        <label id="year-value-text">2014</label>
+
+        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+          <i id ="year-up-1" class="material-icons">chevron_right</i>
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+          <i id ="year-up-10" class="material-icons">arrow_forward</i>
+        </button>
+        <!-- End Year Navigation Buttons -->
+      </p>
+    </div>
+  </div>
+</main>
+</div>
+
+<!--D3 Visualization Scripts -->
+<script src="js/visualization.js"></script>
+</body>
+</html>

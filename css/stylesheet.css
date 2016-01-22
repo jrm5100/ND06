@@ -1,0 +1,11 @@
+main {
+	background-color: lightgray;
+}
+
+.team_button {
+	"margin" : 20px;
+}
+
+#grid {
+	width: 960px;
+}
