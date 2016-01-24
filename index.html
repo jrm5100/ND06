@@ -23,6 +23,7 @@
     mdl-layout--fixed-header">
     <header class="mdl-layout__header">
       <div class="mdl-layout__header-row">
+      	<h1>Visualization of Lahman's Baseball Database</h1>
         <div class="mdl-layout-spacer"></div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
         mdl-textfield--floating-label mdl-textfield--align-right">
@@ -38,15 +39,16 @@
     <div class="mdl-grid", id="grid">
       <!-- Divs with D3 visualization -->
       <div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"><svg></svg>
-      	<div>
+      	<div id="graph1-controls">
          <button class ="mdl-button mdl-js-button mdl-button--colored mdl-button--raised" id="show_unselected-teams-button">Show Unselected Teams</button>
-         <button class ="mdl-button mdl-js-button mdl-button--colored mdl-button--raised" id="Graph1_ystat">Graph1_ystat</button>
+         <select id="g1_ystat_select" class="stat-select"></select>
        </div>
      </div>
      <div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col"><svg></svg>
-       <div>
-         <button id="Graph2-xStat-Selection">Graph2 xStat Dropdown</button>
-         <button id="Graph2-yStat-Selection">Graph2 yStat Dropdown</button>
+       <div id="graph2-controls">
+       	<select id="g2_xstat_select" class="stat-select"></select>
+       	VS
+       	<select id="g2_ystat_select" class="stat-select"></select>
        </div>
      </div>
 

@@ -3,7 +3,7 @@ main {
 }
 
 .team_button {
-	"margin" : 20px;
+	"padding" : 20px;
 }
 
 #grid {
@@ -12,4 +12,9 @@ main {
 
 .label{
 	text-anchor: middle;
+}
+
+#graph2-controls{
+	background-color: #3f51b5;
+	padding: 10px;
 }
