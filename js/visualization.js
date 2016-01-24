@@ -21,7 +21,7 @@ function draw(team_data) {
     var year_span = year_max-year_min
     var selected_year = year_max;
     var selected_teams = ["", "", "", "", ""];
-    var color = d3.scale.category10().domain([1,2,3,4,5]);
+    var color = d3.scale.category10().domain([0,1,2,3,4]);
 
 	var stats = {
 	'winpercent':'Winning Percentage',
@@ -157,6 +157,11 @@ function draw(team_data) {
         .attr("value", function(d){return d;})
         .text(function(d){return stats[d];});
 
+
+
+
+
+
     //Graph1 object
     var Graph1 = new Object();
 
@@ -284,7 +289,8 @@ function draw(team_data) {
         selected.enter()
         	.append("path")
         	.attr('d', function(d){ return lineGen(d.values.seasons);})
-        	.attr('stroke', function(d,i){return color(i);})
+        	.attr('stroke', function(d,i){
+                return color(selected_teams.indexOf(d.key));})
         	.attr('stroke-width', 3)
         	.attr('fill', 'none')
         	.attr('fill-opacity', 0.8);
@@ -399,8 +405,12 @@ function draw(team_data) {
         return radius;
     };
     Graph2.getColor = function(d) {
-        return "gray"; //fix later
-    }
+        if(selected_teams.indexOf(d.franchID) === -1){
+            return "gray";
+        } else {
+            return color(selected_teams.indexOf(d.franchID));
+        }
+    };
 
     //update function
     Graph2.updateGraph = function() {
@@ -437,7 +447,7 @@ function draw(team_data) {
             .attr("cy", function(d) {return Graph2.yScale(d[Graph2.ystat]);})
             .attr("r", Graph2.getRadius)
             .attr("fill", Graph2.getColor)
-            .attr("fill-opacity", 0.5);
+            .attr("fill-opacity", 0.7);
         
         //add new teams	
         circles.enter()
