@@ -40,7 +40,10 @@
       <!-- Divs with D3 visualization -->
       <div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"><svg></svg>
       	<div id="graph1-controls">
-         <button class ="mdl-button mdl-js-button mdl-button--colored mdl-button--raised" id="show_unselected-teams-button">Show Unselected Teams</button>
+      		<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-unselectedteam">
+  			<input type="checkbox" id="checkbox-unselectedteam" class="mdl-checkbox__input" checked>
+  			<span class="mdl-checkbox__label">Show Unselected Teams</span>
+			</label>
          <select id="g1_ystat_select" class="stat-select"></select>
        </div>
      </div>

@@ -48,19 +48,10 @@ function draw(team_data) {
     /* Interface Elements */
 
     //Show or hide unselected teams
-    var unselected_button = d3.select("#show_unselected-teams-button")
-    unselected_button.on("click", function(d){
-        if(unselected_button.classed("mdl-button--colored mdl-button--raised")){
-            //disable button and remove unselected
-            unselected_button.classed("mdl-button--colored mdl-button--raised", false);
-            Graph1.show_unselected = false;
-            Graph1.updateGraph();
-        } else {
-            //enable button and add unselected
-            unselected_button.classed("mdl-button--colored mdl-button--raised", true);
-            Graph1.show_unselected = true;
-            Graph1.updateGraph();
-        };
+    d3.select("#checkbox-unselectedteam")
+        .on("change", function() {
+            Graph1.show_unselected = this.checked;
+            Graph1.updateGraph()
     });
 
     /* Setup Team Selection */
