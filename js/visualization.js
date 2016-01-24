@@ -117,7 +117,7 @@ function draw(team_data) {
     /* Set xstat/ystat */
     var g1_ystat = d3.select("#g1_ystat_select")
         .attr("name", "g1_ystat")
-        .on("change", function(d){
+        .on("change", function(){
             Graph1.ystat = d3.select("#g1_ystat_select").property("value");
             Graph1.updateGraph();
         });
@@ -127,11 +127,13 @@ function draw(team_data) {
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
+        .property("selected", function(d){return d === "winpercent";}) //default value
         .text(function(d){return stats[d];});
+
 
     var g2_ystat = d3.select("#g2_ystat_select")
         .attr("name", "g2_ystat")
-        .on("change", function(d){
+        .on("change", function(){
             Graph2.ystat = d3.select("#g2_ystat_select").property("value");
             Graph2.updateGraph();
         });
@@ -141,11 +143,13 @@ function draw(team_data) {
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
+        .property("selected", function(d){return d === "winpercent";}) //default value
         .text(function(d){return stats[d];});
+
 
     var g2_xstat = d3.select("#g2_xstat_select")
         .attr("name", "g2_xstat")
-        .on("change", function(d){
+        .on("change", function(){
             Graph2.xstat = d3.select("#g2_xstat_select").property("value");
             Graph2.updateGraph();
         });
@@ -155,6 +159,7 @@ function draw(team_data) {
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
+        .property("selected", function(d){return d === "HR";}) //default value
         .text(function(d){return stats[d];});
 
 
@@ -270,6 +275,7 @@ function draw(team_data) {
     		unselected.enter()
     			.append('path')
         		.attr('d', function(d) {return lineGen(d.values.seasons);}) //seasons is an array
+                .attr("title", "unselected")
         		.style('stroke', 'gray')
         		.style('stroke-width', 1)
         		.style('fill', 'none')
@@ -286,14 +292,14 @@ function draw(team_data) {
         selected.transition().duration(500)
         	.attr('d', function(d){ return lineGen(d.values.seasons);});
 
-        selected.enter()
-        	.append("path")
+        selected.enter().append("path")
         	.attr('d', function(d){ return lineGen(d.values.seasons);})
-        	.attr('stroke', function(d,i){
+            .attr("title", function(d){return d.values.franchName;})
+        	.style('stroke', function(d,i){
                 return color(selected_teams.indexOf(d.key));})
-        	.attr('stroke-width', 3)
-        	.attr('fill', 'none')
-        	.attr('fill-opacity', 0.8);
+        	.style('stroke-width', 3)
+        	.style('fill', 'none')
+        	.style('fill-opacity', 0.8)
         
         selected.exit().remove()
 
@@ -318,6 +324,8 @@ function draw(team_data) {
 
         Graph1.chart.select(".y-label")
             .text(stats[Graph1.ystat]);
+
+        //update legend
     };
 
     Graph1.updateGraph();
