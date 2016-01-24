@@ -9,3 +9,7 @@ main {
 #grid {
 	width: 960px;
 }
+
+.label{
+	text-anchor: middle;
+}

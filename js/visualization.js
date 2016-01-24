@@ -14,6 +14,7 @@ function draw(team_data) {
     var year_span = year_max-year_min
     var selected_year = year_max;
     var selected_teams = ["", "", "", "", ""];
+    var color = d3.scale.category10().domain([1,2,3,4,5]);
 
 	var stats = [
 	{'key':'winpercent', 'name':'Winning Percentage'},
@@ -62,17 +63,41 @@ function draw(team_data) {
     Graph1.svg = d3.select("#graph1").select("svg")
     	.attr("width", Graph1.width + Graph1.margin.left + Graph1.margin.right)
     	.attr("height", Graph1.height + Graph1.margin.top + Graph1.margin.bottom)
-    	.append("g")
+    	
+    Graph1.chart = Graph1.svg.append("g")
     	.attr("transform", "translate(" + Graph1.margin.left + "," + Graph1.margin.top + ")");
 
-    Graph1.svg.append("g").attr("class", "axis x-axis");
-    Graph1.svg.append("g").attr("class", "axis y-axis");
-    Graph1.svg.append("g").attr("class", "unselected");
-    Graph1.svg.append("g").attr("class", "selected");
+    Graph1.chart.append("g").attr("class", "axis x-axis");
+    Graph1.chart.append("g").attr("class", "axis y-axis");
+    Graph1.chart.append("g").attr("class", "unselected");
+    Graph1.chart.append("g").attr("class", "selected");
 
-    var year_marker = Graph1.svg.append("g").attr("id", "year_marker");
-    year_marker.append("line");
-    year_marker.append("text");
+    var year_marker = Graph1.chart.append("g").attr("id", "year_marker");
+    year_marker.append("line")
+        .attr("stroke", "#3f51b5")
+        .attr("stroke-width", 3)
+        .attr("fill", "none");
+    year_marker.append("text")
+        .attr("fill", "#3f51b5")
+        .attr("text-anchor", "middle");
+
+    //labels and title
+    Graph1.chart.append("text")
+        .attr("x", Graph1.width/2)
+        .attr("y", -Graph1.margin.top/2)
+        .attr("class", "title label")
+        .text(Graph1.ystat.name + " over Time");
+    Graph1.chart.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -Graph1.height/2)
+        .attr("y", -2*Graph1.margin.left/3)
+        .attr("class", "y-label label")
+        .text(Graph1.ystat.name);
+    Graph1.chart.append("text")
+        .attr("x", Graph1.width/2)
+        .attr("y", Graph1.height + Graph1.margin.bottom/2)
+        .attr("class", "y-label label")
+        .text("Season");
 
     //Scales and axis
     Graph1.xScale = d3.time.scale()
@@ -91,10 +116,10 @@ function draw(team_data) {
     Graph1.yAxis = d3.svg.axis().scale(Graph1.yScale).orient("left");
 
     //Add axes
-    Graph1.svg.select("g.x-axis")
+    Graph1.chart.select("g.x-axis")
     	.attr("transform", "translate(0," + Graph1.height + ")")
     	.call(Graph1.xAxis);
-    Graph1.svg.select("g.y-axis")
+    Graph1.chart.select("g.y-axis")
     	.call(Graph1.yAxis);
 
 
@@ -104,7 +129,7 @@ function draw(team_data) {
     		return d[Graph1.ystat.key];
     	}));
         //update yaxis
-        Graph1.svg.select("g.y-axis")
+        Graph1.chart.select("g.y-axis")
         	.transition()
         	.duration(500)
         	.call(Graph1.yAxis)
@@ -120,7 +145,7 @@ function draw(team_data) {
 
     	//Plot unselected background gray lines
     	if(Graph1.show_unselected) {
-    		var unselected = Graph1.svg.select("g.unselected").selectAll("path")
+    		var unselected = Graph1.chart.select("g.unselected").selectAll("path")
     			.data(nested_franchises, function(d) {return d.key;});
 
     		unselected.transition().duration(500)
@@ -132,15 +157,13 @@ function draw(team_data) {
         		.style('stroke', 'gray')
         		.style('stroke-width', 1)
         		.style('fill', 'none')
-        		.style('fill-opacity', 0.3);
+        		.style('fill-opacity', 0.2);
         } else {
-        	Graph1.svg.select("g.unselected").selectAll("path").remove();
+        	Graph1.chart.select("g.unselected").selectAll("path").remove();
         };
 
         //Plot selected lines
-        var color = d3.scale.category10().domain(selected_teams);
-
-        var selected = Graph1.svg.select("g.selected").selectAll("path")
+        var selected = Graph1.chart.select("g.selected").selectAll("path")
         	.data(nested_franchises.filter(function(d) {
         		return selected_teams.indexOf(d.key) >= 0;}),
     				function(d) {return d.key;}) //key function to tie to team id
@@ -151,15 +174,33 @@ function draw(team_data) {
         	.append("path")
         	.attr('d', function(d){ return lineGen(d.values.seasons);})
         	.attr('stroke', function(d,i){return color(i);})
-        	.attr('stroke-width', 3)
+        	.attr('stroke-width', 5)
         	.attr('fill', 'none')
         	.attr('fill-opacity', 1);
         
         selected.exit().remove()
 
+        //Plot line showing year
+        d3.select("#year_marker").select("line")
+            .transition()
+            .duration(500)
+            .attr("x1", Graph1.xScale(d3.time.format("%Y").parse(selected_year)))
+            .attr("x2", Graph1.xScale(d3.time.format("%Y").parse(selected_year)))
+            .attr("y1", 5)
+            .attr("y2", Graph1.height)
+        d3.select("#year_marker").select("text")
+            .transition()
+            .duration(500)
+            .attr("x", Graph1.xScale(d3.time.format("%Y").parse(selected_year)))
+            .attr("y", 0)
+            .text(selected_year);
 
-        //update labels
-        //update year line
+        //update labels and title
+        Graph1.chart.select(".title")
+            .text(Graph1.ystat.name + " over Time");
+
+        Graph1.chart.select(".y-label")
+            .text(Graph1.ystat.name);
     };
 
     Graph1.updateGraph();
@@ -188,12 +229,29 @@ function draw(team_data) {
     Graph2.svg = d3.select("#graph2").select("svg")
         .attr("width", Graph2.width + Graph2.margin.left + Graph2.margin.right)
         .attr("height", Graph2.height + Graph2.margin.top + Graph2.margin.bottom)
-        .append("g")
+        
+    Graph2.chart = Graph2.svg.append("g")
         .attr("transform", "translate(" + Graph2.margin.left + "," + Graph2.margin.top + ")");
 
-    Graph2.svg.append("g").attr("class", "axis x-axis");
-    Graph2.svg.append("g").attr("class", "axis y-axis");
-    Graph2.svg.append("g").attr("class", "points");
+    Graph2.chart.append("g").attr("class", "axis x-axis");
+    Graph2.chart.append("g").attr("class", "axis y-axis");
+    Graph2.chart.append("g").attr("class", "points");
+    Graph2.chart.append("text")
+        .attr("x", Graph2.width/2)
+        .attr("y", -Graph2.margin.top/2)
+        .attr("class", "title label")
+        .text("Results for " + selected_year);
+    Graph2.chart.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -Graph2.height/2)
+        .attr("y", -2*Graph2.margin.left/3)
+        .attr("class", "y-label label")
+        .text(Graph2.ystat.name);
+    Graph2.chart.append("text")
+        .attr("x", Graph2.width/2)
+        .attr("y", Graph2.height + Graph2.margin.bottom/2)
+        .attr("class", "y-label label")
+        .text(Graph2.xstat.name);
 
     //Scales and axis
     Graph2.xScale = d3.scale.linear()
@@ -211,15 +269,23 @@ function draw(team_data) {
     Graph2.yAxis = d3.svg.axis().scale(Graph2.yScale).orient("left");
 
     //Add axes
-    Graph2.svg.select("g.x-axis")
+    Graph2.chart.select("g.x-axis")
         .attr("transform", "translate(0," + Graph2.height + ")")
         .call(Graph2.xAxis);
-    Graph2.svg.select("g.y-axis")
+    Graph2.chart.select("g.y-axis")
         .call(Graph2.yAxis);
 
     //function to calc radius
     Graph2.getRadius = function(d) {
-        return 5; //fix later
+        var radius = 5
+        if(d['w_worldseries']=="Y"){
+            radius = 20; //ws winner
+        } else if(d['w_league']=="Y"){
+            radius = 15; //ws loser
+        } else if (d['w_division'] == "Y" || d['w_wildcard']=="Y"){
+            radius = 10; //playoffs
+        }
+        return radius;
     };
     Graph2.getColor = function(d) {
         return "gray"; //fix later
@@ -232,7 +298,7 @@ function draw(team_data) {
             return d[Graph2.xstat.key];
         }));
         //update xAxis
-        Graph2.svg.select("g.x-axis")
+        Graph2.chart.select("g.x-axis")
             .transition()
             .duration(500)
             .call(Graph2.xAxis)        
@@ -242,13 +308,13 @@ function draw(team_data) {
             return d[Graph2.ystat.key];
         }));
         //update yAxis
-        Graph2.svg.select("g.y-axis")
+        Graph2.chart.select("g.y-axis")
             .transition()
             .duration(500)
             .call(Graph2.yAxis)
 
         //plot all points
-        var circles = Graph2.svg.select("g.points")
+        var circles = Graph2.chart.select("g.points")
             .selectAll("circle")
             .data(team_data.filter(function(d){return d.year===selected_year;}),
         	function(d) {return d.franchID;});
@@ -274,24 +340,15 @@ function draw(team_data) {
         //remove missing teams
         circles.exit().remove();
 
-        //labels and title
-        Graph2.svg.append("text")
-            .attr("x", Graph2.width/2)
-            .attr("y", 0)
-            .text("Results for " + selected_year)
-            .attr("class", "title")
+        //update labels and title
+        Graph2.chart.select(".title")
+            .text("Results for " + selected_year);
 
-        Graph2.svg.append("text")
-            .attr("x", Graph2.width/2)
-            .attr("y", Graph2.height-12)
-            .text(Graph2.xstat.name)
-            .attr("class", "x-label")
+        Graph2.chart.select(".x-label")
+            .text(Graph2.xstat.name);
 
-        Graph2.svg.append("text")
-            .attr("x", 12)
-            .attr("y", Graph2.height/2)
-            .text(Graph2.ystat.name)
-            .attr("class", "y-label")
+        Graph2.chart.select(".y-label")
+            .text(Graph2.ystat.name);
     };
 
 
