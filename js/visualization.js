@@ -127,7 +127,7 @@ function draw(team_data) {
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
-        .property("selected", function(d){return d === "winpercent";}) //default value
+        .property("selected", function(d){return d === "R";}) //default value
         .text(function(d){return stats[d];});
 
 
@@ -143,7 +143,7 @@ function draw(team_data) {
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
-        .property("selected", function(d){return d === "winpercent";}) //default value
+        .property("selected", function(d){return d === "R";}) //default value
         .text(function(d){return stats[d];});
 
 
