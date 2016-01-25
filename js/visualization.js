@@ -355,7 +355,7 @@ function draw(team_data) {
     var Graph2 = new Object();
 
     //size
-    Graph2.margin = {top : 50, right: 50, bottom: 120, left: 80};
+    Graph2.margin = {top : 50, right: 50, bottom: 150, left: 80};
     Graph2.width = 550 - Graph2.margin.left - Graph2.margin.right;
     Graph2.height = 400 - Graph2.margin.top - Graph2.margin.bottom;
 
@@ -375,6 +375,31 @@ function draw(team_data) {
     Graph2.chart.append("g").attr("class", "axis x-axis");
     Graph2.chart.append("g").attr("class", "axis y-axis");
     Graph2.chart.append("g").attr("class", "points");
+
+    //legend
+    Graph2.legend = Graph2.svg.append("g").attr("class", "legend")
+                    .attr("transform", "translate("+ (Graph2.margin.left+20) + "," + (Graph1.height+Graph1.margin.top+Graph1.margin.bottom+10) + ")");
+
+    Graph2.legend.selectAll("circle")
+        .data([20, 15, 10, 5])
+        .enter()
+        .append("circle")
+        .attr("cx", function(d,i){return i*120;})
+        .attr("cy", 0)
+        .attr("r", function(d){ return d;})
+        .style("fill", "gray")
+        .attr("fill-opacity", 0.7);
+
+    Graph2.legend.selectAll("text")
+        .data(["WS Winner", "WS Loser", "Playoff Team", "Others"])
+        .enter()
+        .append("text")
+        .attr("x", function(d,i){return i*120;})
+        .attr("y", 35)
+        .text(function(d){return d;});
+
+
+    //labels
     Graph2.chart.append("text")
         .attr("x", Graph2.width/2)
         .attr("y", -Graph2.margin.top/2)
