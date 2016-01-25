@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- Meta -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Overview of MLB History</title>
-  <!-- Font -->
-  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
-  <!-- Style and JS -->
-  <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
-  <!-- D3 -->
-  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  <!-- Material Design Lite -->
-  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
-  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
-  <!-- Material Design icon font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<!-- Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Overview of MLB History</title>
+	<!-- Font -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+	<!-- Style and JS -->
+	<link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+	<!-- D3 -->
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<!-- Material Design Lite -->
+	<script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+	<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+	<!-- Material Design icon font -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     <!-- The drawer is always open in large screens. The header is always shown,
@@ -22,62 +22,76 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
     mdl-layout--fixed-header">
     <header class="mdl-layout__header">
-      <div class="mdl-layout__header-row">
-      	<h1>Visualization of Lahman's Baseball Database</h1>
-        <div class="mdl-layout-spacer"></div>
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
-        mdl-textfield--floating-label mdl-textfield--align-right">
-      </div>
+    	<div class="mdl-layout__header-row">
+    		<h1>Visualization of Lahman's Baseball Database</h1>
+    		<div class="mdl-layout-spacer"></div>
+    		<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+    		mdl-textfield--floating-label mdl-textfield--align-right">
+    	</div>
     </div>
-  </header>
-  <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">Teams</span>
-    <nav class="mdl-navigation"></nav>
-  </div>
+</header>
+<div class="mdl-layout__drawer">
+	<span class="mdl-layout-title">Teams</span>
+	<nav class="mdl-navigation"></nav>
+</div>
 
-  <main class="mdl-layout__content">
-    <div class="mdl-grid", id="grid">
-      <!-- Divs with D3 visualization -->
-      <div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col"><svg></svg>
-      	<div id="graph1-controls">
-      		<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-unselectedteam">
-  			<input type="checkbox" id="checkbox-unselectedteam" class="mdl-checkbox__input" checked>
-  			<span class="mdl-checkbox__label">Show Unselected Teams</span>
-			</label>
-         <select id="g1_ystat_select" class="stat-select"></select>
-       </div>
-     </div>
-     <div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col"><svg></svg>
-       <div id="graph2-controls">
-       	<select id="g2_xstat_select" class="stat-select"></select>
-       	VS
-       	<select id="g2_ystat_select" class="stat-select"></select>
-       </div>
-     </div>
+<main class="mdl-layout__content">
+	<div class="mdl-grid", id="grid">
+		<!-- Divs with D3 visualization -->
+		<div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+			<svg></svg>
+			<ul id="color-key"></ul>
+		</div>
+		<div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--7-col">
+			<svg></svg>
+		</div>
 
-     <div id="yearinfo" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col">
-       <p>
-         <!-- Year Navigation Buttons -->
-         <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-          <i id ="year-down-10" class="material-icons">arrow_back</i>
-        </button>
+		<div id="controls" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--5-col">
+			<div id="year-controls" class="controldiv">
+				<!-- Year Navigation Buttons -->
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+					<i id ="year-down-10" class="material-icons">arrow_back</i>
+				</button>
 
-        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-          <i id ="year-down-1" class="material-icons">chevron_left</i>
-        </button>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+					<i id ="year-down-1" class="material-icons">chevron_left</i>
+				</button>
 
-        <label id="year-value-text">2014</label>
+				<label id="year-value-text">2014</label>
 
-        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-          <i id ="year-up-1" class="material-icons">chevron_right</i>
-        </button>
-        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
-          <i id ="year-up-10" class="material-icons">arrow_forward</i>
-        </button>
-        <!-- End Year Navigation Buttons -->
-      </p>
-    </div>
-  </div>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+					<i id ="year-up-1" class="material-icons">chevron_right</i>
+				</button>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+					<i id ="year-up-10" class="material-icons">arrow_forward</i>
+				</button>
+			</div>
+			<!--Graph 1 Controls -->
+			<div id="graph1-controls" class="controldiv">
+				<p class="setting-label">Timeline Graph:</p>
+				<label>Y-axis Stat:
+				<select id="g1_ystat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
+				</label>
+				<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-unselectedteam">
+					<input type="checkbox" id="checkbox-unselectedteam" class="mdl-checkbox__input" checked>
+					<span class="mdl-checkbox__label">Show Unselected Teams</span>
+				</label>
+			</div>
+			<!--Graph 2 Controls -->
+			<div id="graph2-controls" class="controldiv">
+				<p class="setting-label">Plot of stats for one season</p>
+				<p>
+				<label>X-axis Stat: </label>
+				<select id="g2_xstat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
+				</p>
+				<p>
+				<label>Y-axis Stat: </label>
+				<select id="g2_ystat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
+				</p>
+			</div>
+
+		</div>
+	</div>
 </main>
 </div>
 

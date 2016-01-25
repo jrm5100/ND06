@@ -171,7 +171,7 @@ function draw(team_data) {
     var Graph1 = new Object();
 
     //size
-    Graph1.margin = {top : 50, right: 50, bottom: 80, left: 80};
+    Graph1.margin = {top : 50, right: 50, bottom: 50, left: 80};
     Graph1.width = 960 - Graph1.margin.left - Graph1.margin.right;
     Graph1.height = 320 - Graph1.margin.top - Graph1.margin.bottom;
 
@@ -192,6 +192,10 @@ function draw(team_data) {
     Graph1.chart.append("g").attr("class", "axis y-axis");
     Graph1.chart.append("g").attr("class", "unselected");
     Graph1.chart.append("g").attr("class", "selected");
+    Graph1.legend = Graph1.svg.append("g").attr("class", "legend")
+        .attr("height", 40)
+        .attr("width", Graph1.width)
+        .attr("transform", "translate(" + Graph1.margin.left + "," + (Graph1.height+Graph1.margin.top+Graph1.margin.bottom/2) + ")")
 
     var year_marker = Graph1.chart.append("g").attr("id", "year_marker");
     year_marker.append("line")
@@ -216,7 +220,7 @@ function draw(team_data) {
         .text(stats[Graph1.ystat]);
     Graph1.chart.append("text")
         .attr("x", Graph1.width/2)
-        .attr("y", Graph1.height + Graph1.margin.bottom/2)
+        .attr("y", Graph1.height + 40)
         .attr("class", "y-label label")
         .text("Season");
 
@@ -245,6 +249,17 @@ function draw(team_data) {
 
 
     Graph1.updateGraph = function() {
+        //update legend
+        Graph1.legend = d3.select("#color-key").selectAll("li")
+            .data(nested_franchises.filter(function(d) {
+                return selected_teams.indexOf(d.key) >= 0;}),
+                    function(d) {return d.key;})
+        Graph1.legend.enter()
+            .append("li")
+            .style("color", function(d){return color(selected_teams.indexOf(d.key));})
+            .text(function(d){return d.values.franchName;});
+        Graph1.legend.exit().remove();
+
     	//update yscale domain
     	Graph1.yScale.domain(d3.extent(team_data, function(d) {
     		return d[Graph1.ystat];
@@ -295,7 +310,7 @@ function draw(team_data) {
         selected.enter().append("path")
         	.attr('d', function(d){ return lineGen(d.values.seasons);})
             .attr("title", function(d){return d.values.franchName;})
-        	.style('stroke', function(d,i){
+        	.style('stroke', function(d){
                 return color(selected_teams.indexOf(d.key));})
         	.style('stroke-width', 3)
         	.style('fill', 'none')
@@ -325,7 +340,6 @@ function draw(team_data) {
         Graph1.chart.select(".y-label")
             .text(stats[Graph1.ystat]);
 
-        //update legend
     };
 
     Graph1.updateGraph();
@@ -341,8 +355,8 @@ function draw(team_data) {
     var Graph2 = new Object();
 
     //size
-    Graph2.margin = {top : 50, right: 50, bottom: 80, left: 80};
-    Graph2.width = 480 - Graph2.margin.left - Graph2.margin.right;
+    Graph2.margin = {top : 50, right: 50, bottom: 120, left: 80};
+    Graph2.width = 550 - Graph2.margin.left - Graph2.margin.right;
     Graph2.height = 400 - Graph2.margin.top - Graph2.margin.bottom;
 
     //Graph Display Parameters
@@ -374,7 +388,7 @@ function draw(team_data) {
         .text(stats[Graph2.ystat]);
     Graph2.chart.append("text")
         .attr("x", Graph2.width/2)
-        .attr("y", Graph2.height + Graph2.margin.bottom/2)
+        .attr("y", Graph2.height + 40)
         .attr("class", "x-label label")
         .text(stats[Graph2.xstat]);
 
@@ -484,14 +498,7 @@ function draw(team_data) {
     //Set up Graph2
     Graph2.updateGraph();
 
-
-
-    /* Setup Year Summary */
-    function draw_yearinfo(){
-    	// fill in info like WS winner
-    };
-
-    function update_yearinfo(delta) {
+   function update_yearinfo(delta) {
     	if (delta < 0){
     		selected_year = String(d3.max([year_min, +selected_year + delta]))
     	} else {

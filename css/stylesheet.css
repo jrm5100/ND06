@@ -1,10 +1,16 @@
 main {
 	background-color: lightgray;
 }
-
-.team_button {
-	"padding" : 20px;
+.title{
+	font-size: 1.5em;
 }
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
 
 #grid {
 	width: 960px;
@@ -14,7 +20,26 @@ main {
 	text-anchor: middle;
 }
 
-#graph2-controls{
-	background-color: #3f51b5;
+#year-value-text{
+	font-size: 1.8em;
+}
+
+.controldiv{
 	padding: 10px;
+	margin: 10px;
+	outline: #000 solid thin;
+}
+.setting-label{
+	font-size: 2em;
+}
+
+#color-key {
+    width: 70%;
+    margin: auto;
+}
+#color-key li{
+	display: inline;
+	list-style-type: none;
+	float: left;
+	padding-left: 30px;
 }
