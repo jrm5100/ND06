@@ -1,52 +1,36 @@
 body{
 	font-family: Roboto;
+	background-color: lightgray
 }
-main {
-	background-color: lightgray;
+
+#grid {
+	width: 980px;
 }
-.title{
-	font-size: 1.5em;
+
+#dynasties h3{
+	text-align: center;
 }
+#dynasties li{
+	list-style-type: none;
+	text-align: center;
+}
+#dynasties button{
+	width: 80%;
+	margin: 5px;
+}
+
+#intro,
+.controldiv{
+	padding: 10px;
+}
+
+.label{
+	text-anchor: middle;
+}
+
 .axis path,
 .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
-}
-
-#grid {
-	width: 960px;
-}
-
-.legend text,
-.label{
-	text-anchor: middle;
-}
-
-#year-value-text{
-	font-size: 1.8em;
-}
-
-.controldiv{
-	padding: 10px;
-	margin: 10px;
-	outline: #000 solid thin;
-}
-.setting-label{
-	font-size: 2em;
-}
-
-#instructions{
-	padding: 20px;
-}
-
-#color-key {
-    width: 70%;
-    margin: auto;
-}
-#color-key li{
-	display: inline;
-	list-style-type: none;
-	float: left;
-	padding-left: 30px;
 }

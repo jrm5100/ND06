@@ -16,12 +16,13 @@ function draw(team_data) {
         .entries(team_data);
 
 	//Adjustable Settings
-	var year_min = d3.min(team_data, function(d) {return d['year'];});
-	var year_max = d3.max(team_data, function(d) {return d['year'];});
-    var year_span = year_max-year_min
-    var selected_year = year_max;
-    var selected_teams = ["", "", "", "", ""];
-    var color = d3.scale.category10().domain([0,1,2,3,4]);
+	var year_min = String(d3.min(team_data, function(d) {return d['year'];})); //coerced to number
+	var year_max = String(d3.max(team_data, function(d) {return d['year'];})); //coerced to number
+    //Start with first franchise selected
+    var selected_year_min = d3.time.format("%Y").parse("2010");
+    var selected_year_max = d3.time.format("%Y").parse("2014");
+    var selected_year = "2010";
+    var selected_team = "SFG";
 
 	var stats = {
 	'winpercent':'Winning Percentage',
@@ -45,7 +46,61 @@ function draw(team_data) {
 	'E':'Errors'
 	};
 
+    var dynasties = [
+        {'name':'2010-2014 Giants', 'key':'SFG', 'start':"2010", 'end':"2014"},
+        {'name':'1996-2000 Yankees', 'key':'NYY', 'start':"1996", 'end':"2000"},
+        {'name':'1971-1975 A\'s', 'key':'OAK', 'start':"1971", 'end':"1975"},
+        {'name':'1958-1962 Yankees', 'key':'NYY', 'start':"1958", 'end':"1962"},
+        {'name':'1949-1953 Yankees', 'key':'NYY', 'start':"1949", 'end':"1953"},
+        {'name':'1942-1946 Cardinals', 'key':'STL', 'start':"1942", 'end':"1946"},
+        {'name':'1935-1939 Yankees', 'key':'NYY', 'start':"1935", 'end':"1939"},
+        {'name':'1914-1918 Red Sox', 'key':'BOS', 'start':"1914", 'end':"1918"},
+        {'name':'1910-1914 Athletics', 'key':'OAK', 'start':"1910", 'end':"1914"}
+        ];
+
     /* Interface Elements */
+
+    //Custom Dynasty
+
+    //Fill out team selection
+    var custom_team = d3.select("#custom-team").selectAll("option")
+        .data(nested_franchises)
+        .enter()
+        .append("option")
+        .attr("value", function(d){return d.key;})
+        .property("selected", function(d){return d.key === "ATL";}) //default value
+        .text(function(d){return d.values.franchName;});
+    
+    d3.select("#submit-custom")
+    //selected_team
+    //selected_year_min = String()
+    //selected_year_max = String()
+    //selected_year
+    //color button, uncolor others
+
+    //Dynasty Buttons
+    var dynasty_buttons = d3.select("#dynasties_list").selectAll("button")
+        .data(dynasties)
+        .enter()
+        .append("button")
+        .attr("class", "mdl-button mdl-js-button mdl-button--raised")
+        .text(function(d){return d.name;})
+        .on("click", function(d){
+            //update buttons
+            dynasty_buttons.classed("mdl-button--colored", false);
+            d3.select(this).classed("mdl-button--colored", true);
+            //update settings
+            selected_team = d.key;
+            selected_year = d.start;
+            selected_year_min = d3.time.format("%Y").parse(d.start);
+        selected_year_max = d3.time.format("%Y").parse(d.end);
+            //update graphs
+            Graph1.updateGraph();
+            Graph2.updateGraph();
+        });
+
+    //first one is selected by default
+    d3.select("#dynasties_list").select("button").classed("mdl-button--colored", true);
 
     //Show or hide unselected teams
     d3.select("#checkbox-unselectedteam")
@@ -54,64 +109,24 @@ function draw(team_data) {
             Graph1.updateGraph()
     });
 
-    /* Setup Team Selection */
-    var nav = d3.select(".mdl-navigation");
-    var team_buttons = nav.selectAll("button.team-button")
-        .data(nested_franchises)
-        .enter()
-        .append("button")
-        .attr("class", "team-button mdl-button mdl-js-button")
-        .attr("id", function(d){return d.key;})
-        .text(function(d) {return d.values['franchName']});
-
-    /* team button functionality */
-    team_buttons.on("click", function(d) {
-
-        // Check if already selected and modify
-        var pos_in_selected = selected_teams.indexOf(d.key);
-        var first_blank = selected_teams.indexOf("");
-
-        if(pos_in_selected === -1 & first_blank != -1) {
-            //add to selected and update
-            selected_teams[first_blank] = d.key;
-            d3.select(this)
-            .classed("mdl-button--colored mdl-button--raised", true);
-            Graph1.updateGraph();
-            Graph2.updateGraph();
-        } else if (pos_in_selected === -1 & first_blank === -1) {
-            //ignore
-        } else {
-            //remove from selected and update
-            selected_teams[pos_in_selected] = "";
-            d3.select(this)
-            .classed("mdl-button--colored", false)
-            .classed("mdl-button--raised", false);
-            Graph1.updateGraph();
-            Graph2.updateGraph();
-        };
-    });
-
     /* Setup Year Selection */
 
-    d3.select("#year-down-10")
-    .on("click", function(d){
-        update_yearinfo(-10);
-    });
-
-
     d3.select("#year-down-1")
-    .on("click", function(d){
-        update_yearinfo(-1);
+        .on("click", function(d){
+            if(d3.time.format("%Y").parse(selected_year) > selected_year_min){
+                selected_year = String(+selected_year - 1);
+                console.log(selected_year);
+                Graph2.updateGraph();
+            };
     });
 
     d3.select("#year-up-1")
-    .on("click", function(d){
-        update_yearinfo(1);
-    });
-
-    d3.select("#year-up-10")
-    .on("click", function(d){
-        update_yearinfo(10);
+        .on("click", function(d){
+        if(d3.time.format("%Y").parse(selected_year) < selected_year_max){
+            selected_year = String(+selected_year + 1);
+            console.log(selected_year);
+            Graph2.updateGraph();
+        };
     });
 
     /* Set xstat/ystat */
@@ -127,7 +142,7 @@ function draw(team_data) {
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
-        .property("selected", function(d){return d === "R";}) //default value
+        .property("selected", function(d){return d === "winpercent";}) //default value
         .text(function(d){return stats[d];});
 
 
@@ -159,7 +174,7 @@ function draw(team_data) {
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
-        .property("selected", function(d){return d === "HR";}) //default value
+        .property("selected", function(d){return d === "RA";}) //default value
         .text(function(d){return stats[d];});
 
 
@@ -171,8 +186,8 @@ function draw(team_data) {
     var Graph1 = new Object();
 
     //size
-    Graph1.margin = {top : 50, right: 50, bottom: 50, left: 80};
-    Graph1.width = 960 - Graph1.margin.left - Graph1.margin.right;
+    Graph1.margin = {top : 50, right: 25, bottom: 50, left: 80};
+    Graph1.width = 640 - Graph1.margin.left - Graph1.margin.right;
     Graph1.height = 320 - Graph1.margin.top - Graph1.margin.bottom;
 
     //Graph Display Parameters
@@ -192,19 +207,6 @@ function draw(team_data) {
     Graph1.chart.append("g").attr("class", "axis y-axis");
     Graph1.chart.append("g").attr("class", "unselected");
     Graph1.chart.append("g").attr("class", "selected");
-    Graph1.legend = Graph1.svg.append("g").attr("class", "legend")
-        .attr("height", 40)
-        .attr("width", Graph1.width)
-        .attr("transform", "translate(" + Graph1.margin.left + "," + (Graph1.height+Graph1.margin.top+Graph1.margin.bottom/2) + ")")
-
-    var year_marker = Graph1.chart.append("g").attr("id", "year_marker");
-    year_marker.append("line")
-        .attr("stroke", "#3f51b5")
-        .attr("stroke-width", 3)
-        .attr("fill", "none");
-    year_marker.append("text")
-        .attr("fill", "#3f51b5")
-        .attr("text-anchor", "middle");
 
     //labels and title
     Graph1.chart.append("text")
@@ -226,18 +228,15 @@ function draw(team_data) {
 
     //Scales and axis
     Graph1.xScale = d3.time.scale()
-    	.range([0, Graph1.width])
-    	.domain([
-    		d3.time.format("%Y").parse(year_min),
-    		d3.time.format("%Y").parse(year_max)
-    		]);
+        .range([0, Graph1.width])
+        .domain([selected_year_min, selected_year_max]);
     Graph1.yScale = d3.scale.linear()
     	.range([Graph1.height, 0])
     	.domain(d3.extent(team_data, function(d) {
     		return d[Graph1.ystat];
     		}));
 
-    Graph1.xAxis = d3.svg.axis().scale(Graph1.xScale).orient("bottom");
+    Graph1.xAxis = d3.svg.axis().scale(Graph1.xScale).orient("bottom").ticks(d3.time.year, 1);
     Graph1.yAxis = d3.svg.axis().scale(Graph1.yScale).orient("left");
 
     //Add axes
@@ -249,21 +248,17 @@ function draw(team_data) {
 
 
     Graph1.updateGraph = function() {
-        //update legend
-        Graph1.legend = d3.select("#color-key").selectAll("li")
-            .data(nested_franchises.filter(function(d) {
-                return selected_teams.indexOf(d.key) >= 0;}),
-                    function(d) {return d.key;})
-        Graph1.legend.enter()
-            .append("li")
-            .style("color", function(d){return color(selected_teams.indexOf(d.key));})
-            .text(function(d){return d.values.franchName;});
-        Graph1.legend.exit().remove();
-
-    	//update yscale domain
+    	//update xscale domain
+        Graph1.xScale.domain([selected_year_min, selected_year_max]);
+        //update yscale domain
     	Graph1.yScale.domain(d3.extent(team_data, function(d) {
     		return d[Graph1.ystat];
     	}));
+        //update xaxis
+        Graph1.chart.select("g.x-axis")
+            .transition()
+            .duration(500)
+            .call(Graph1.xAxis)
         //update yaxis
         Graph1.chart.select("g.y-axis")
         	.transition()
@@ -301,37 +296,18 @@ function draw(team_data) {
 
         //Plot selected lines
         var selected = Graph1.chart.select("g.selected").selectAll("path")
-        	.data(nested_franchises.filter(function(d) {
-        		return selected_teams.indexOf(d.key) >= 0;}),
-    				function(d) {return d.key;}) //key function to tie to team id
+        	.data(nested_franchises.filter(function(d){return d.key===selected_team;}))
         selected.transition().duration(500)
         	.attr('d', function(d){ return lineGen(d.values.seasons);});
 
         selected.enter().append("path")
         	.attr('d', function(d){ return lineGen(d.values.seasons);})
-            .attr("title", function(d){return d.values.franchName;})
-        	.style('stroke', function(d){
-                return color(selected_teams.indexOf(d.key));})
-        	.style('stroke-width', 3)
+        	.style('stroke', "#3f51b5")
+        	.style('stroke-width', 4)
         	.style('fill', 'none')
         	.style('fill-opacity', 0.8)
         
         selected.exit().remove()
-
-        //Plot line showing year
-        d3.select("#year_marker").select("line")
-            .transition()
-            .duration(500)
-            .attr("x1", Graph1.xScale(d3.time.format("%Y").parse(selected_year)))
-            .attr("x2", Graph1.xScale(d3.time.format("%Y").parse(selected_year)))
-            .attr("y1", 5)
-            .attr("y2", Graph1.height)
-        d3.select("#year_marker").select("text")
-            .transition()
-            .duration(500)
-            .attr("x", Graph1.xScale(d3.time.format("%Y").parse(selected_year)))
-            .attr("y", 0)
-            .text(selected_year);
 
         //update labels and title
         Graph1.chart.select(".title")
@@ -355,8 +331,8 @@ function draw(team_data) {
     var Graph2 = new Object();
 
     //size
-    Graph2.margin = {top : 50, right: 50, bottom: 150, left: 80};
-    Graph2.width = 550 - Graph2.margin.left - Graph2.margin.right;
+    Graph2.margin = {top : 50, right: 25, bottom: 140, left: 80};
+    Graph2.width = 640 - Graph2.margin.left - Graph2.margin.right;
     Graph2.height = 400 - Graph2.margin.top - Graph2.margin.bottom;
 
     //Graph Display Parameters
@@ -378,7 +354,7 @@ function draw(team_data) {
 
     //legend
     Graph2.legend = Graph2.svg.append("g").attr("class", "legend")
-                    .attr("transform", "translate("+ (Graph2.margin.left+20) + "," + (Graph1.height+Graph1.margin.top+Graph1.margin.bottom+10) + ")");
+                    .attr("transform", "translate("+ (Graph2.margin.left+50) + "," + (Graph1.height+Graph1.margin.top+Graph1.margin.bottom+25) + ")");
 
     Graph2.legend.selectAll("circle")
         .data([20, 15, 10, 5])
@@ -394,6 +370,7 @@ function draw(team_data) {
         .data(["WS Winner", "WS Loser", "Playoff Team", "Others"])
         .enter()
         .append("text")
+        .attr("class", "label")
         .attr("x", function(d,i){return i*120;})
         .attr("y", 35)
         .text(function(d){return d;});
@@ -452,15 +429,18 @@ function draw(team_data) {
         return radius;
     };
     Graph2.getColor = function(d) {
-        if(selected_teams.indexOf(d.franchID) === -1){
-            return "gray";
+        if(d.franchID === selected_team){
+            return "#3f51b5";
         } else {
-            return color(selected_teams.indexOf(d.franchID));
+            return "gray";
         }
     };
 
     //update function
     Graph2.updateGraph = function() {
+        //update year label
+        d3.select("#year-value-text").text(selected_year);
+
         //update xScale domain
         Graph2.xScale.domain(d3.extent(team_data, function(d) {
             return d[Graph2.xstat];
@@ -525,9 +505,9 @@ function draw(team_data) {
 
    function update_yearinfo(delta) {
     	if (delta < 0){
-    		selected_year = String(d3.max([year_min, +selected_year + delta]))
+    		selected_year = d3.max([year_min, +selected_year + delta])
     	} else {
-    		selected_year = String(d3.min([year_max, +selected_year + delta]))
+    		selected_year = d3.min([year_max, +selected_year + delta])
     	};
 
 		//update text

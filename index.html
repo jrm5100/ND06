@@ -3,7 +3,7 @@
 <head>
 	<!-- Meta -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Overview of MLB History</title>
+	<title>Dynasties in MLB</title>
 	<!-- Font -->
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 	<!-- Style and JS -->
@@ -17,94 +17,83 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
-    <!-- The drawer is always open in large screens. The header is always shown,
-    even in small screens. -->
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer
-    mdl-layout--fixed-header">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
     	<div class="mdl-layout__header-row">
-    		<h1>Visualization of Lahman's Baseball Database</h1>
-    		<div class="mdl-layout-spacer"></div>
-    		<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
-    		mdl-textfield--floating-label mdl-textfield--align-right">
+    		<span class="mdl-layout-title">Dynasties in MLB</span>
     	</div>
-    </div>
-</header>
-<div class="mdl-layout__drawer">
-	<span class="mdl-layout-title">Teams</span>
-	<nav class="mdl-navigation"></nav>
-</div>
-
-<main class="mdl-layout__content">
-	<div class="mdl-grid", id="grid">
-		<!-- Divs with D3 visualization -->
-		<div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-			<svg></svg>
-			<ul id="color-key"></ul>
-		</div>
-		<div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--7-col">
-			<svg></svg>
-		</div>
-
-		<div id="controls" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--5-col">
-			<div id="year-controls" class="controldiv">
-				<!-- Year Navigation Buttons -->
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-					<i id ="year-down-10" class="material-icons">arrow_back</i>
-				</button>
-
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-					<i id ="year-down-1" class="material-icons">chevron_left</i>
-				</button>
-
-				<label id="year-value-text">2014</label>
-
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-					<i id ="year-up-1" class="material-icons">chevron_right</i>
-				</button>
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-					<i id ="year-up-10" class="material-icons">arrow_forward</i>
-				</button>
+	</header>
+	<main class="mdl-layout__content">
+		<div class="mdl-grid", id="grid">
+			<!-- Instructions -->
+			<div id="intro" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
+				<h3>What is a Dynasty?</h3>
+				<p>A sports dynasty is a team that dominates their competitors for an extended length of time.  One possible definition for a dynasty in the MLB (major league baseball) is a team that wins 3 or more championships in 5 years.  By this definition there have been 9 dynasties in the 130+ year history of the league.  This visualization allows a more in depth look at the statistics behind the success of these teams.</p>
+				<p>The data comes from Lahman's Baseball Database.  The first graph displays one statistic for active franchises with the selected dynasty highlighted.  The second graph displays two statistics in a scatterplot for the selected year of the dynasty.  The statistics displayed in each graph can be customized.</p>
+				<p>It's also possible to define a custom dynasty by selecting a team and a range of seasons.  For example, the Atlanta Braves made 14 consecutive postseasons starting in 1991, but only won 1 World Series in that time.</p>
+			
+				<div id="custom-dynasty", class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
+					<label>Team: 
+						<select id="custom-team" class="mdl-button mdl-js-button mdl-button--raised"></select>
+					</label>
+					<form>
+  						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    						<input class="mdl-textfield__input" type="text" id="custom-year-min" pattern="-?[0-9]*(\.[0-9]+)?" value=1991>
+    						<label class="mdl-textfield__label" for="custom-year-min">From:</label>
+    						<span class="mdl-textfield__error">Input is not a valid year!</span>
+  						</div>
+  						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    						<input class="mdl-textfield__input" type="text" id="custom-year-max" pattern="-?[0-9]*(\.[0-9]+)?" value=2004>
+    						<label class="mdl-textfield__label" for="custom-year-max">To:</label>
+    						<span class="mdl-textfield__error">Input is not a valid year!</span>
+  						</div>
+					</form>
+					<button class="mdl-button mdl-js-button mdl-button--raised" id="submit-custom">Set Custom Dynasty</button>
+				</div>
+			</div>
+			<!--List of dynasties -->
+			<div id="dynasties" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
+				<h3>Dynasties</h3>
+				<ul id="dynasties_list"></ul>
+			</div>
+			<!--Graph 1-->
+			<div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
+				<svg></svg>
 			</div>
 			<!--Graph 1 Controls -->
-			<div id="graph1-controls" class="controldiv">
-				<p class="setting-label">Timeline Graph:</p>
+			<div id="graph1-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
 				<label>Y-axis Stat:
-				<select id="g1_ystat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
+					<select id="g1_ystat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
 				</label>
 				<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-unselectedteam">
 					<input type="checkbox" id="checkbox-unselectedteam" class="mdl-checkbox__input" checked>
 					<span class="mdl-checkbox__label">Show Unselected Teams</span>
 				</label>
 			</div>
-			<!--Graph 2 Controls -->
-			<div id="graph2-controls" class="controldiv">
-				<p class="setting-label">Plot of stats for one season</p>
-				<p>
-				<label>X-axis Stat: </label>
-				<select id="g2_xstat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
-				</p>
-				<p>
-				<label>Y-axis Stat: </label>
-				<select id="g2_ystat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
-				</p>
+			<!--Graph 2-->
+			<div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
+				<svg></svg>
 			</div>
-		</div>
-		<div id="instructions" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-		<h3>Instructions</h3>
-		<p>
-		This is a visualization of selected data from Lahman's Baseball Database.  The first graph displays one statistic for active franchises going back to 1876.  The second graph displays two statistics in a scatterplot for the selected year.
-		</p><p>
-		Up to five teams can be specifically selected from the menu on the left.  When selected, they will be colored in both graphs.  Display of unselected teams in the first graph can be toggled on or off.
-		</p><p>
-		Several different trends can be observed, but the drop in offense over the last 15 years or so (the end of the steroid era) seems obvious.
-		</p>
-		</div>
+			<!--Graph 2 Controls -->
+			<div id="graph2-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
+					<label>X-axis Stat: </label>
+					<select id="g2_xstat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
+					<br>
+					<label>Y-axis Stat: </label>
+					<select id="g2_ystat_select" class="stat-select mdl-button mdl-js-button mdl-button--raised"></select>
+				<div id="year-controls" class="controldiv">
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+						<i id ="year-down-1" class="material-icons">chevron_left</i>
+					</button>
+					<label id="year-value-text">2014</label>
+					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+						<i id ="year-up-1" class="material-icons">chevron_right</i>
+					</button>
+				</div>
+			</div>		
+	</main>
 	</div>
-</main>
-</div>
-
-<!--D3 Visualization Scripts -->
-<script src="js/visualization.js"></script>
+	<!--D3 Visualization Scripts -->
+	<script src="js/visualization.js"></script>
 </body>
 </html>

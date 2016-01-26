@@ -13,6 +13,7 @@ This was designed to be an exploratory visualization, but with an initial explan
 * http://www.getmdl.io/
 * http://www.seanlahman.com/baseball-archive/statistics/
 * http://bl.ocks.org/mbostock/3019563
+* http://espn.go.com/blog/sweetspot/post/_/id/54157/ranking-baseballs-greatest-dynasties
 
 
 # Licenses
