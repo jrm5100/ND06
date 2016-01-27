@@ -26,11 +26,18 @@ body{
 
 .label{
 	text-anchor: middle;
+	font-size: 1.2em;
 }
+.title{
+	font-size: 1.5em;
 
 .axis path,
 .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
+}
+
+#custom-dynasty {
+	padding: 20px;
 }

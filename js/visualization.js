@@ -232,7 +232,7 @@ function draw(team_data) {
         .attr("x", Graph1.width/2)
         .attr("y", -Graph1.margin.top/2)
         .attr("class", "title label")
-        .text(stats[Graph1.ystat] + " over Time");
+        .text(stats[Graph1.ystat]);
     Graph1.chart.append("text")
         .attr("transform", "rotate(-90)")
         .attr("x", -Graph1.height/2)
@@ -330,7 +330,7 @@ function draw(team_data) {
 
         //update labels and title
         Graph1.chart.select(".title")
-            .text(stats[Graph1.ystat] + " over Time");
+            .text(stats[Graph1.ystat]);
 
         Graph1.chart.select(".y-label")
             .text(stats[Graph1.ystat]);
