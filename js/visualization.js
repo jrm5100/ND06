@@ -70,13 +70,6 @@ function draw(team_data) {
         .attr("value", function(d){return d.key;})
         .property("selected", function(d){return d.key === "ATL";}) //default value
         .text(function(d){return d.values.franchName;});
-    
-    d3.select("#submit-custom")
-    //selected_team
-    //selected_year_min = String()
-    //selected_year_max = String()
-    //selected_year
-    //color button, uncolor others
 
     //Dynasty Buttons
     var dynasty_buttons = d3.select("#dynasties_list").selectAll("button")
@@ -88,16 +81,36 @@ function draw(team_data) {
         .on("click", function(d){
             //update buttons
             dynasty_buttons.classed("mdl-button--colored", false);
+            d3.select("#submit-custom").classed("mdl-button--colored", false);
             d3.select(this).classed("mdl-button--colored", true);
             //update settings
             selected_team = d.key;
             selected_year = d.start;
             selected_year_min = d3.time.format("%Y").parse(d.start);
-        selected_year_max = d3.time.format("%Y").parse(d.end);
+            selected_year_max = d3.time.format("%Y").parse(d.end);
             //update graphs
             Graph1.updateGraph();
             Graph2.updateGraph();
         });
+
+    //custom button functionality
+    d3.select("#submit-custom")
+        .on("click", function(){
+            //update buttons
+            dynasty_buttons.classed("mdl-button--colored", false);
+            d3.select(this).classed("mdl-button--colored", true);
+            //update settings
+            selected_team = d3.select("#custom-team").property("value");
+            selected_year_min = d3.select("#custom-year-min").property("value");
+            selected_year = selected_year_min;
+            selected_year_min = d3.time.format("%Y").parse(selected_year_min); //parse data
+            selected_year_max = d3.select("#custom-year-max").property("value");
+            selected_year_max = d3.time.format("%Y").parse(selected_year_max); //parse data
+            //update graphs
+            Graph1.updateGraph();
+            Graph2.updateGraph();           
+        })
+
 
     //first one is selected by default
     d3.select("#dynasties_list").select("button").classed("mdl-button--colored", true);
@@ -115,7 +128,6 @@ function draw(team_data) {
         .on("click", function(d){
             if(d3.time.format("%Y").parse(selected_year) > selected_year_min){
                 selected_year = String(+selected_year - 1);
-                console.log(selected_year);
                 Graph2.updateGraph();
             };
     });
@@ -203,10 +215,17 @@ function draw(team_data) {
     Graph1.chart = Graph1.svg.append("g")
     	.attr("transform", "translate(" + Graph1.margin.left + "," + Graph1.margin.top + ")");
 
+    //Create Clip Path
+    Graph1.chart.append("clipPath")
+        .attr("id", "graph1-clip")
+        .append("rect")
+        .attr("width", Graph1.width)
+        .attr("height", Graph1.height);
+
     Graph1.chart.append("g").attr("class", "axis x-axis");
     Graph1.chart.append("g").attr("class", "axis y-axis");
-    Graph1.chart.append("g").attr("class", "unselected");
-    Graph1.chart.append("g").attr("class", "selected");
+    Graph1.chart.append("g").attr("class", "unselected").attr("clip-path", "url(#graph1-clip)");
+    Graph1.chart.append("g").attr("class", "selected").attr("clip-path", "url(#graph1-clip)");
 
     //labels and title
     Graph1.chart.append("text")
@@ -416,7 +435,7 @@ function draw(team_data) {
     Graph2.chart.select("g.y-axis")
         .call(Graph2.yAxis);
 
-    //function to calc radius
+    //small helper functions for plotting
     Graph2.getRadius = function(d) {
         var radius = 5
         if(d['w_worldseries']=="Y"){
@@ -428,13 +447,14 @@ function draw(team_data) {
         }
         return radius;
     };
-    Graph2.getColor = function(d) {
+    Graph2.isSelected = function(d) {
         if(d.franchID === selected_team){
-            return "#3f51b5";
+            return true;
         } else {
-            return "gray";
+            return false;
         }
     };
+    Graph2.getStroke
 
     //update function
     Graph2.updateGraph = function() {
@@ -473,7 +493,8 @@ function draw(team_data) {
             .attr("cx", function(d) {return Graph2.xScale(d[Graph2.xstat]);})
             .attr("cy", function(d) {return Graph2.yScale(d[Graph2.ystat]);})
             .attr("r", Graph2.getRadius)
-            .attr("fill", Graph2.getColor)
+            .attr("fill", function(d) {if(Graph2.isSelected(d)){return "#3f51b5";} else {return "gray";}})
+            .attr("stroke", function(d) {if(Graph2.isSelected(d)){return "#3f51b5";} else {return "none";}})
             .attr("fill-opacity", 0.7);
         
         //add new teams	
@@ -482,7 +503,8 @@ function draw(team_data) {
             .attr("cx", function(d) {return Graph2.xScale(d[Graph2.xstat]);})
             .attr("cy", function(d) {return Graph2.yScale(d[Graph2.ystat]);})
             .attr("r", Graph2.getRadius)
-            .attr("fill", Graph2.getColor)
+            .attr("fill", function(d) {if(Graph2.isSelected(d)){return "#3f51b5";} else {return "gray";}})
+            .attr("stroke", function(d) {if(Graph2.isSelected(d)){return "#3f51b5";} else {return "none";}})
             .style("fill-opacity", 0.5);
 
         //remove missing teams
@@ -561,22 +583,22 @@ function format_data(team_data) {
        		"w_league" : d['LgWin'],
        		"w_worldseries" : d['WSWin'],
 
-       		"R" : +d['R'],
-       		"AB" : +d['AB'],
-       		"H" : +d['H'],
-       		"2B" : +d['2B'],
-       		"3B" : +d['3B'],
-       		"HR" : +d['HR'],
-       		"BB" : +d['BB'],
-       		"SO" : +d['SO'],
-       		"SB" : +d['SB'],
+       		"R" : +d['R']*(162/+d['G']),
+       		"AB" : +d['AB']*(162/+d['G']),
+       		"H" : +d['H']*(162/+d['G']),
+       		"2B" : +d['2B']*(162/+d['G']),
+       		"3B" : +d['3B']*(162/+d['G']),
+       		"HR" : +d['HR']*(162/+d['G']),
+       		"BB" : +d['BB']*(162/+d['G']),
+       		"SO" : +d['SO']*(162/+d['G']),
+       		"SB" : +d['SB']*(162/+d['G']),
 
-       		"RA" : +d['RA'],
+       		"RA" : +d['RA']*(162/+d['G']),
        		"ERA" : +d['ERA'],
-       		"CG" : +d['CG'],
-       		"BBA" : +d['BBA'],
-       		"SOA" : +d['SOA'],
-       		"E" : +d['E']
+       		"CG" : +d['CG']*(162/+d['G']),
+       		"BBA" : +d['BBA']*(162/+d['G']),
+       		"SOA" : +d['SOA']*(162/+d['G']),
+       		"E" : +d['E']*(162/+d['G'])
        	}
        	);
 	});
