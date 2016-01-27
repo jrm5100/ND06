@@ -2,7 +2,7 @@
 Tell Stories with with Data Visualization
 
 # Summary
-I used data from Lahman's Baseball Database to show various statistics for baseball dynasties.  The criteris for a dynasty was 3 world series wins in a span of 5 years, but it is also possible to customize the display if the reader has their own definition of a dynasty.  The first graph displays one statistic (winning percentage by default) for the years of the dynasty with the selected team highlighted. The second graph displays two statistics (runs and runs allowed) in a scatterplot for the selected year, with the selected team highlighted.  
+I used data from Lahman's Baseball Database to show various statistics for baseball dynasties.  The criteria for a dynasty was 3 world series wins in a span of 5 years, but it is also possible to customize the display if the reader has their own definition of a dynasty.  The first graph displays one statistic (winning percentage by default) for the years of the dynasty with the selected team highlighted. The second graph displays two statistics (runs and runs allowed) in a scatterplot for the selected year, with the selected team highlighted.  
 
 # Design
 This was designed to be an exploratory visualization, but with an initial explanatory view.  This way a narrative can be conveyed, with plenty of flexibility for further exploration.  After the first version I settled on a more clear main narrative- displaying information for one "dynasty" at a time with the flexibility to let the reader explore their own choice of "dynasty" or view different stats.
