@@ -13,6 +13,9 @@ I decided to include two charts that are connected- selecting a team will highli
 * That's a cool visualization! I like the combination of the time-line plot with a scatter plot for a single year -- and the possibility of selecting several teams for comparison.  One thing I noticed is that the number of homeruns has generally increased over time -- although the number of games played remained almost constant. I have to admit, I hardly know anything about baseball, but is this an indication that the sports 'intensity' has increased? In your instructions section you mention a drop in offense over the last 15 years... from which feature can one see this? Is it this slight decline in the number of homeruns over recent years?
 ** I decided to make a more clear narrative by making it about dynasties.
 * The custom dynasty team selection button isn't working.
+** Fixed.
+* The line graph makes it hard to see years on the edges and it looks messy if there are too many years.
+** Extensively reworked the x-axis to use a linear scale and padded the domain.
 
 
 
