@@ -290,40 +290,72 @@ function draw(team_data) {
             return Graph1.yScale(d[Graph1.ystat]);
         });
 
-        //Plot unselected background gray lines
+        //If show unselected is enabled
         if(Graph1.show_unselected) {
-            var unselected = Graph1.chart.select("g.unselected").selectAll("path")
+            //Plot unselected background gray lines
+            var unselected_lines = Graph1.chart.select("g.unselected").selectAll("path")
                 .data(nested_franchises, function(d) {return d.key;});
 
-            unselected.transition().duration(500)
+            unselected_lines.transition().duration(500)
                 .attr('d', function(d) {return lineGen(d.values.seasons);});
 
-            unselected.enter()
+            unselected_lines.enter()
                 .append('path')
                 .attr('d', function(d) {return lineGen(d.values.seasons);}) //seasons is an array
                 .attr("title", "unselected")
                 .style('stroke', 'gray')
                 .style('stroke-width', 1)
                 .style('fill', 'none')
-                .style('fill-opacity', 0.2);
+                .style('stroke-opacity', 0.6);
+            //Plot circles on unselected lines
+            var unselected_circles = Graph1.chart.select("g.unselected").selectAll("circle")
+                .data(team_data);
+            unselected_circles.transition().duration(500)
+                .attr('cx', function(d){ return Graph1.xScale(d['year']);})
+                .attr('cy', function(d){ return Graph1.yScale(d[Graph1.ystat]);});
+
+            unselected_circles.enter().append("circle")
+                .attr('cx', function(d){ return Graph1.xScale(d['year']);})
+                .attr('cy', function(d){ return Graph1.yScale(d[Graph1.ystat]);})
+                .attr('r', 3)
+                .style('fill', "gray")
+                .style('fill-opacity', 0.6);
+
+            unselected_circles.exit().remove();
+
+        //else remove everything
         } else {
-            Graph1.chart.select("g.unselected").selectAll("path").remove();
+            Graph1.chart.select("g.unselected").selectAll("*").remove();
         };
 
         //Plot selected lines
-        var selected = Graph1.chart.select("g.selected").selectAll("path")
+        var selected_lines = Graph1.chart.select("g.selected").selectAll("path")
             .data(nested_franchises.filter(function(d){return d.key===selected_team;}))
-        selected.transition().duration(500)
+        selected_lines.transition().duration(500)
             .attr('d', function(d){ return lineGen(d.values.seasons);});
 
-        selected.enter().append("path")
+        selected_lines.enter().append("path")
             .attr('d', function(d){ return lineGen(d.values.seasons);})
             .style('stroke', "#3f51b5")
-            .style('stroke-width', 4)
+            .style('stroke-width', 2)
             .style('fill', 'none')
-            .style('fill-opacity', 0.8)
 
-        selected.exit().remove()
+        selected_lines.exit().remove();
+
+        //Plot circles on lines
+        var selected_circles = Graph1.chart.select("g.selected").selectAll("circle")
+            .data(team_data.filter(function(d){return d.franchID===selected_team;}))
+        selected_circles.transition().duration(500)
+            .attr('cx', function(d){ return Graph1.xScale(d['year']);})
+            .attr('cy', function(d){ return Graph1.yScale(d[Graph1.ystat]);});
+
+        selected_circles.enter().append("circle")
+            .attr('cx', function(d){ return Graph1.xScale(d['year']);})
+            .attr('cy', function(d){ return Graph1.yScale(d[Graph1.ystat]);})
+            .attr('r', 4)
+            .style('fill', "#3f51b5");
+
+        selected_circles.exit().remove();
 
         //update labels and title
         Graph1.chart.select(".title")
