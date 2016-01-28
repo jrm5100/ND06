@@ -262,7 +262,16 @@ function draw(team_data) {
         .orient("left");
 
     //Add axes
-    var maxticks = selected_year_max - selected_year_min;
+    function calcMaxTicks(yearmin, yearmax){
+        var range = yearmax-yearmin;
+        if(range > 10){
+            return 10;
+        } else {
+            return range;
+        }
+    };
+
+    var maxticks = calcMaxTicks(selected_year_min, selected_year_max);
     Graph1.chart.select("g.x-axis")
         .attr("transform", "translate(0," + Graph1.height + ")")
         .call(Graph1.xAxis.ticks(maxticks));
@@ -278,7 +287,7 @@ function draw(team_data) {
             return d[Graph1.ystat];
         }));
         //update xaxis
-        maxticks = selected_year_max - selected_year_min;
+        maxticks = calcMaxTicks(selected_year_min, selected_year_max)
         Graph1.chart.select("g.x-axis")
             .transition()
             .duration(500)
