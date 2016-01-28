@@ -30,13 +30,18 @@ body{
 }
 .title{
 	font-size: 1.5em;
+}
 
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: black;
   shape-rendering: crispEdges;
 }
+
+.tick line{
+    opacity: 0.2;
+  }
 
 #custom-dynasty {
 	padding: 20px;

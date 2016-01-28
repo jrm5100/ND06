@@ -245,7 +245,7 @@ function draw(team_data) {
     //Scales and axis
     Graph1.xScale = d3.scale.linear()
         .range([0, Graph1.width])
-        .domain([selected_year_min, selected_year_max])
+        .domain([selected_year_min-0.1, selected_year_max+0.1])
     Graph1.yScale = d3.scale.linear()
         .range([Graph1.height, 0])
         .domain(d3.extent(team_data, function(d) {
@@ -255,7 +255,8 @@ function draw(team_data) {
     Graph1.xAxis = d3.svg.axis()
         .scale(Graph1.xScale)
         .orient("bottom")
-        .tickFormat(d3.format("d"));
+        .tickFormat(d3.format("d"))
+        .tickSize(-Graph1.height);
     Graph1.yAxis = d3.svg.axis()
         .scale(Graph1.yScale)
         .orient("left");
@@ -271,7 +272,7 @@ function draw(team_data) {
     Graph1.updateGraph = function() {
         //update xscale ticks and domain
         Graph1.xScale
-            .domain([selected_year_min, selected_year_max]);
+            .domain([selected_year_min-0.1, selected_year_max+0.1]);
         Graph1.yScale.domain(d3.extent(team_data, function(d) {
             return d[Graph1.ystat];
         }));
