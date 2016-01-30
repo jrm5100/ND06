@@ -195,7 +195,7 @@ function draw(team_data) {
     var Graph1 = new Object();
 
     //size
-    Graph1.margin = {top : 50, right: 25, bottom: 50, left: 80};
+    Graph1.margin = {top : 50, right: 25, bottom: 60, left: 80};
     Graph1.width = 640 - Graph1.margin.left - Graph1.margin.right;
     Graph1.height = 320 - Graph1.margin.top - Graph1.margin.bottom;
 
@@ -223,6 +223,17 @@ function draw(team_data) {
     Graph1.chart.append("g").attr("class", "axis y-axis");
     Graph1.chart.append("g").attr("class", "unselected").attr("clip-path", "url(#graph1-clip)");
     Graph1.chart.append("g").attr("class", "selected").attr("clip-path", "url(#graph1-clip)");
+
+    //mini legend
+    Graph1.chart.append("circle")
+    	.attr("cx", Graph1.width - 120)
+    	.attr("cy", Graph1.height + Graph1.margin.bottom - 15)
+    	.attr('r', 5)
+        .style('fill', "#3f51b5")
+    Graph1.chart.append("text")
+    	.attr("x", Graph1.width - 110)
+    	.attr("y", Graph1.height + Graph1.margin.bottom - 10)
+    	.text("World Series Win");
 
     //labels and title
     Graph1.chart.append("text")
@@ -373,6 +384,30 @@ function draw(team_data) {
             .style('fill', "#3f51b5");
 
         selected_circles.exit().remove();
+
+        //plot wswin circles
+        var wswin_markers = Graph1.chart.select("g.selected").selectAll(".wswin_marker")
+        	.data(team_data.filter(function(d){return d.franchID===selected_team;}));
+
+        wswin_markers.transition().duration(500)
+        	.attr('cx', function(d){ return Graph1.xScale(d['year']);})
+            .attr('cy', Graph1.height-5);
+
+        wswin_markers.enter().append("circle")
+        	.attr('cx', function(d){ return Graph1.xScale(d['year']);})
+            .attr('cy', Graph1.height-5)
+            .attr('class', 'wswin_marker')
+            .attr('r', function(d){
+            	if(d['w_worldseries']=="Y"){
+            		return 5;
+            	} else {
+            		return 0;
+            	};
+            })
+            .style('fill', "#3f51b5");
+
+        wswin_markers.exit().remove();
+
 
         //update labels and title
         Graph1.chart.select(".title")

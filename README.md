@@ -2,7 +2,7 @@
 Tell Stories with with Data Visualization
 
 # Summary
-I used data from Lahman's Baseball Database to show various statistics for baseball dynasties.  The criteria for a dynasty was 3 world series wins in a span of 5 years, but it is also possible to customize the display if the reader has their own definition of a dynasty.  The first graph displays one statistic (winning percentage by default) for the years of the dynasty with the selected team highlighted. The second graph displays two statistics (runs and runs allowed) in a scatterplot for the selected year, with the selected team highlighted.  
+I used data from Lahman's Baseball Database to show various statistics for baseball dynasties.  The criteria used here was <a href="http://espn.go.com/blog/sweetspot/post/_/id/54157/ranking-baseballs-greatest-dynasties">3 world series wins in a span of 5 years</a>, but since the definition of a dynasty is subjective it is also possible to customize the display.  The first graph displays one statistic (winning percentage by default) for the years of the dynasty with the selected team highlighted. The second graph displays two statistics (runs and runs allowed) in a scatterplot for the selected year, with the selected team highlighted.  
 
 # Design
 This was designed to be an exploratory visualization, but with an initial explanatory view.  This way a narrative can be conveyed, with plenty of flexibility for further exploration.  After the first version I settled on a more clear main narrative- displaying information for one "dynasty" at a time with the flexibility to let the reader explore their own choice of "dynasty" or view different stats.
@@ -15,7 +15,9 @@ I decided to include two charts that are connected- selecting a team will highli
 * The custom dynasty team selection button isn't working.
 ** Fixed.
 * The line graph makes it hard to see years on the edges and it looks messy if there are too many years.
-** Extensively reworked the x-axis to use a linear scale and padded the domain.
+** I extensively reworked the x-axis to use a linear scale and padded the domain.
+* The criteria is based on world series wins, but it's hard to see what years they won it.  Unless you scan through the years on the bottom.
+** I added a small marker at the bottom of the line plot that marks years in which the team won the World Series.  I also tried text labels (to show other results too) but the graph became too cluttered when looking at more than 5 or so years (on custom dynasty view).
 
 
 
