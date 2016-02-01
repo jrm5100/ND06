@@ -20,20 +20,18 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
     	<div class="mdl-layout__header-row">
-    		<span class="mdl-layout-title">Dynasties in MLB</span>
+    		<span class="mdl-layout-title">Dynasties in Major League Baseball</span>
     	</div>
 	</header>
 	<main class="mdl-layout__content">
 		<div class="mdl-grid", id="grid">
 			<!-- Instructions -->
 			<div id="intro" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
-				<h3>What is a Dynasty?</h3>
-				<p>A sports dynasty is a team that dominates their competitors for an extended length of time.  One possible definition for a dynasty in the MLB (major league baseball) is <a href="http://espn.go.com/blog/sweetspot/post/_/id/54157/ranking-baseballs-greatest-dynasties">a team that wins 3 or more championships in 5 years</a>.  By this definition there have been 9 dynasties in the 130+ year history of the league.  This visualization allows a more in depth look at the statistics behind the success of these teams.</p>
-				<p>The data comes from Lahman's Baseball Database.  The first graph displays one statistic for active franchises with the selected dynasty highlighted.  The second graph displays two statistics in a scatterplot for the selected year of the dynasty.  The statistics displayed in each graph can be customized.  Offensive and defensive statistics (runs, strikeouts, errors, etc) have been normalized where appropriate so that they match the modern 162 game season.</p>
-				<p>The definition of a dynasty is subjective, so it's also possible to define a custom dynasty.  For example, the Atlanta Braves made 14 consecutive postseasons starting in 1991, but only won 1 World Series in that time.  Simply select a team, set a range of seasons, and click the "Set Custom Dynasty" button.</p>
-			
-				<div id="custom-dynasty">
-				<h6>Custom Dynasty Settings</h6>
+				<h4>What is a Dynasty?</h4>
+				<p>A sports dynasty is a team that dominates their competitors for an extended length of time.  One possible definition for a dynasty in the MLB (major league baseball) is <a href="http://espn.go.com/blog/sweetspot/post/_/id/54157/ranking-baseballs-greatest-dynasties">a team that wins 3 or more championships in 5 years</a>.  By this definition there have been 9 dynasties in the 130+ year history of the league.  This visualization allows a more in-depth look at the statistics behind the success of these teams.</p>
+				<p>The data comes from Lahman's Baseball Database.  Offensive and defensive statistics (runs, strikeouts, errors, etc) have been normalized where appropriate so that they match the modern 162 game season.</p>			
+				<h5>Custom Dynasty Settings: </h5>
+				<div id="custom-dynasty" class = "mdl-cell mdl-cell--6-col">
 					<label>Team: 
 						<select id="custom-team" class="mdl-button mdl-button--raised"></select>
 					</label>
@@ -50,14 +48,15 @@
   						</div>
 					</form>
 				</div>
+				<div id="custom-dynasty-description"  class="mdl-cell mdl-cell--6-col">
+					<p>The definition of a dynasty is subjective.  To create a custom dynasty view simply enter in a year range and select a team.  For example, the Atlanta Braves made 14 consecutive postseasons starting in 1991, but only won 1 World Series in that time.</p>
+					<button class="mdl-button mdl-js-button mdl-button--raised" id="submit-custom">Set Custom Dynasty</button>
+				</div>
 			</div>
 			<!--List of dynasties -->
 			<div id="dynasties" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
-				<h3>Dynasties</h3>
+				<h4>Dynasties</h4>
 				<ul id="dynasties_list"></ul>
-				<ul>
-					<button class="mdl-button mdl-js-button mdl-button--raised" id="submit-custom">Set Custom Dynasty</button>
-				</ul>
 			</div>
 			<!--Graph 1-->
 			<div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
@@ -65,12 +64,14 @@
 			</div>
 			<!--Graph 1 Controls -->
 			<div id="graph1-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
+				<h5>One Statistic over Time</h5>
+				<p>This graph shows one statistic across the dynasty period for the selected team.  Other teams can be displayed for comparison.  Dynasties would be expected to maintain a high winning percentage each season.</p>
+				<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-unselectedteam">
+					<input type="checkbox" id="checkbox-unselectedteam" class="mdl-checkbox__input">
+					<span class="mdl-checkbox__label">Show Other Teams for Comparison</span>
+				</label>
 				<label>Y-axis Stat:
 					<select id="g1_ystat_select" class="stat-select mdl-button mdl-button--raised"></select>
-				</label>
-				<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-unselectedteam">
-					<input type="checkbox" id="checkbox-unselectedteam" class="mdl-checkbox__input" checked>
-					<span class="mdl-checkbox__label">Show Unselected Teams</span>
 				</label>
 			</div>
 			<!--Graph 2-->
@@ -79,6 +80,8 @@
 			</div>
 			<!--Graph 2 Controls -->
 			<div id="graph2-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
+				<h5>Two Statistics in a Season</h5>
+					<p>This graph shows two statistics for each team in a single season.  Playoff results are reflected by the size of the circles.  Dynasties would generally score more runs and allow fewer runs, and should do well enough to make the playoffs.</p>
 					<label>X-axis Stat: </label>
 					<select id="g2_xstat_select" class="stat-select mdl-button mdl-button--raised"></select>
 					<br>

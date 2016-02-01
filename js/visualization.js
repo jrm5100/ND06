@@ -201,7 +201,7 @@ function draw(team_data) {
 
     //Graph Display Parameters
     Graph1.ystat = d3.select("#g1_ystat_select").property("value");
-    Graph1.show_unselected = true;
+    Graph1.show_unselected = false; //Hide other teams by default
 
 
     //SVG layout structure
@@ -240,13 +240,11 @@ function draw(team_data) {
         .attr("x", Graph1.width/2)
         .attr("y", -Graph1.margin.top/2)
         .attr("class", "title label")
-        .text(stats[Graph1.ystat]);
     Graph1.chart.append("text")
         .attr("transform", "rotate(-90)")
         .attr("x", -Graph1.height/2)
         .attr("y", -2*Graph1.margin.left/3)
         .attr("class", "y-label label")
-        .text(stats[Graph1.ystat]);
     Graph1.chart.append("text")
         .attr("x", Graph1.width/2)
         .attr("y", Graph1.height + 40)
@@ -411,7 +409,7 @@ function draw(team_data) {
 
         //update labels and title
         Graph1.chart.select(".title")
-            .text(stats[Graph1.ystat]);
+            .text(stats[Graph1.ystat] + " from " + String(selected_year_min) + " to " + String(selected_year_max));
 
         Graph1.chart.select(".y-label")
             .text(stats[Graph1.ystat]);
@@ -481,18 +479,15 @@ function draw(team_data) {
         .attr("x", Graph2.width/2)
         .attr("y", -Graph2.margin.top/2)
         .attr("class", "title label")
-        .text("Results for " + String(selected_year));
     Graph2.chart.append("text")
         .attr("transform", "rotate(-90)")
         .attr("x", -Graph2.height/2)
         .attr("y", -2*Graph2.margin.left/3)
         .attr("class", "y-label label")
-        .text(stats[Graph2.ystat]);
     Graph2.chart.append("text")
         .attr("x", Graph2.width/2)
         .attr("y", Graph2.height + 40)
         .attr("class", "x-label label")
-        .text(stats[Graph2.xstat]);
 
     //Scales and axis
     Graph2.xScale = d3.scale.linear()
@@ -593,7 +588,7 @@ function draw(team_data) {
 
         //update labels and title
         Graph2.chart.select(".title")
-            .text("Results for " + String(selected_year));
+            .text(stats[Graph2.xstat] + " vs " + stats[Graph2.ystat] + " in the " + String(selected_year) + " Season");
 
         Graph2.chart.select(".x-label")
             .text(stats[Graph2.xstat]);

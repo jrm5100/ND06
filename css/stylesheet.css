@@ -7,7 +7,7 @@ body{
 	width: 980px;
 }
 
-#dynasties h3{
+#dynasties h4{
 	text-align: center;
 }
 #dynasties li{
@@ -21,7 +21,7 @@ body{
 
 #intro,
 .controldiv{
-	padding: 10px;
+	padding: 10px 10px 10px 15px;
 }
 
 .label{
@@ -44,5 +44,13 @@ body{
   }
 
 #custom-dynasty {
-	padding: 20px;
+	padding: 15px;
+	float: left;
+}
+#custom-dynasty-description{
+	padding: 15px;
+	float:left;
+}
+#submit-custom{
+	float:right;
 }
