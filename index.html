@@ -26,76 +26,33 @@
 	<main class="mdl-layout__content">
 		<div class="mdl-grid", id="grid">
 			<!-- Instructions -->
-			<div id="intro" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
-				<h4>What is a Dynasty?</h4>
-				<p>A sports dynasty is a team that dominates their competitors for an extended length of time.  One possible definition for a dynasty in the MLB (major league baseball) is <a href="http://espn.go.com/blog/sweetspot/post/_/id/54157/ranking-baseballs-greatest-dynasties">a team that wins 3 or more championships in 5 years</a>.  By this definition there have been 9 dynasties in the 130+ year history of the league.  This visualization allows a more in-depth look at the statistics behind the success of these teams.</p>
-				<p>The data comes from Lahman's Baseball Database.  Offensive and defensive statistics (runs, strikeouts, errors, etc) have been normalized where appropriate so that they match the modern 162 game season.</p>			
-				<h5>Custom Dynasty Settings: </h5>
-				<div id="custom-dynasty" class = "mdl-cell mdl-cell--6-col">
-					<label>Team: 
-						<select id="custom-team" class="mdl-button mdl-button--raised"></select>
-					</label>
-					<form>
-  						<div class="input-year mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    						<input class="mdl-textfield__input" type="text" id="custom-year-min" pattern="-?[0-9]*(\.[0-9]+)?" value=1991>
-    						<label class="mdl-textfield__label" for="custom-year-min">From:</label>
-    						<span class="mdl-textfield__error">Input is not a valid year!</span>
-  						</div>
-  						<div class="input-year mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    						<input class="mdl-textfield__input" type="text" id="custom-year-max" pattern="-?[0-9]*(\.[0-9]+)?" value=2005>
-    						<label class="mdl-textfield__label" for="custom-year-max">To:</label>
-    						<span class="mdl-textfield__error">Input is not a valid year!</span>
-  						</div>
-					</form>
-				</div>
-				<div id="custom-dynasty-description"  class="mdl-cell mdl-cell--6-col">
-					<p>The definition of a dynasty is subjective.  To create a custom dynasty view simply enter in a year range and select a team.  For example, the Atlanta Braves made 14 consecutive postseasons starting in 1991, but only won 1 World Series in that time.</p>
-					<button class="mdl-button mdl-js-button mdl-button--raised" id="submit-custom">Set Custom Dynasty</button>
-				</div>
+			<div id="intro" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+				<h4>What is more important- Pitching or Hitting?</h4>
+				<p>Lorem Ipsum Baseball</p>
+				<p>The data comes from Lahman's Baseball Database.  Data prior to the 1969 season has been excluded since this was the first season with league play and an expanded postseason.</p>			
 			</div>
-			<!--List of dynasties -->
-			<div id="dynasties" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
-				<h4>Dynasties</h4>
-				<ul id="dynasties_list"></ul>
-			</div>
-			<!--Graph 1-->
+			<!--Graph 1 (Offense)-->
 			<div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
 				<svg></svg>
 			</div>
-			<!--Graph 1 Controls -->
+			<!--Graph 1 (Offense) Controls -->
 			<div id="graph1-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
-				<h5>One Statistic over Time</h5>
-				<p>This graph shows one statistic across the dynasty period for the selected team.  Other teams can be displayed for comparison.  Dynasties would be expected to maintain a high winning percentage each season.</p>
-				<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-unselectedteam">
-					<input type="checkbox" id="checkbox-unselectedteam" class="mdl-checkbox__input">
-					<span class="mdl-checkbox__label">Show Other Teams for Comparison</span>
-				</label>
-				<label>Y-axis Stat:
+				<h5>Offense</h5>
+				<label>Show: 
 					<select id="g1_ystat_select" class="stat-select mdl-button mdl-button--raised"></select>
 				</label>
 			</div>
-			<!--Graph 2-->
+			<!--Graph 2 (Pitching/Defense)-->
 			<div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
 				<svg></svg>
 			</div>
-			<!--Graph 2 Controls -->
+			<!--Graph 2 (Pitching/Defense) Controls -->
 			<div id="graph2-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
-				<h5>Two Statistics in a Season</h5>
-					<p>This graph shows two statistics for each team in a single season.  Playoff results are reflected by the size of the circles.  Dynasties would generally score more runs and allow fewer runs, and should do well enough to make the playoffs.</p>
-					<label>X-axis Stat: </label>
-					<select id="g2_xstat_select" class="stat-select mdl-button mdl-button--raised"></select>
-					<br>
-					<label>Y-axis Stat: </label>
+				<h5>Offense</h5>
+				<label>Show: 
 					<select id="g2_ystat_select" class="stat-select mdl-button mdl-button--raised"></select>
-				<div id="year-controls" class="controldiv">
-					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id ="year-down-1">
-						<i class="material-icons">chevron_left</i>
-					</button>
-					<label class="label" id="year-value-text">2014</label>
-					<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id ="year-up-1" >
-						<i class="material-icons">chevron_right</i>
-					</button>
-				</div>
+				</label>
+			</div>
 			</div>		
 	</main>
 	</div>

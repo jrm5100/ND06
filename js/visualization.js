@@ -8,21 +8,12 @@ function agg_franchise(leaves){
 function draw(team_data) {
     "use strict";
 
-    // Group by franchise id for line graph
-    var nested_franchises = d3.nest()
+    // Group world series winners together
+    var ws_winners = d3.nest()
         .key(function(d) {return d['franchID'];})
         .rollup(agg_franchise)
         .sortKeys(d3.ascending)
         .entries(team_data);
-
-    //Adjustable Settings
-    var year_min = d3.min(team_data, function(d) {return d['year'];});
-    var year_max = d3.max(team_data, function(d) {return d['year'];});
-    //Start with first franchise selected
-    var selected_year_min = 2010;
-    var selected_year_max = 2014;
-    var selected_year = selected_year_min;
-    var selected_team = "SFG";
 
     var stats = {
     'winpercent':'Winning Percentage',
@@ -46,99 +37,13 @@ function draw(team_data) {
     'E':'Errors'
     };
 
-    var dynasties = [
-        {'name':'2010-2014 Giants', 'key':'SFG', 'start':2010, 'end':2014},
-        {'name':'1996-2000 Yankees', 'key':'NYY', 'start':1996, 'end':2000},
-        {'name':'1971-1975 A\'s', 'key':'OAK', 'start':1971, 'end':1975},
-        {'name':'1958-1962 Yankees', 'key':'NYY', 'start':1958, 'end':1962},
-        {'name':'1949-1953 Yankees', 'key':'NYY', 'start':1949, 'end':1953},
-        {'name':'1942-1946 Cardinals', 'key':'STL', 'start':1942, 'end':1946},
-        {'name':'1935-1939 Yankees', 'key':'NYY', 'start':1935, 'end':1939},
-        {'name':'1914-1918 Red Sox', 'key':'BOS', 'start':1914, 'end':1918},
-        {'name':'1910-1914 Athletics', 'key':'OAK', 'start':1910, 'end':1914}
-        ];
+    // Group stats into offense or pitching categories
+    var o_stats = ['R', 'AB', 'H', '2B', '3B', 'HR', 'BB', 'SO', 'SB']
+    var p_stats = ['RA', 'ERA', 'CG', 'BBA', 'SOA', 'E']
 
     /* Interface Elements */
 
-    //Custom Dynasty
-
-    //Fill out team selection
-    var custom_team = d3.select("#custom-team").selectAll("option")
-        .data(nested_franchises)
-        .enter()
-        .append("option")
-        .attr("value", function(d){return d.key;})
-        .property("selected", function(d){return d.key === "ATL";}) //default value
-        .text(function(d){return d.values.franchName;});
-
-    //Dynasty Buttons
-    var dynasty_buttons = d3.select("#dynasties_list").selectAll("button")
-        .data(dynasties)
-        .enter()
-        .append("button")
-        .attr("class", "mdl-button mdl-js-button mdl-button--raised")
-        .text(function(d){return d.name;})
-        .on("click", function(d){
-            //update buttons
-            dynasty_buttons.classed("mdl-button--colored", false);
-            d3.select("#submit-custom").classed("mdl-button--colored", false);
-            d3.select(this).classed("mdl-button--colored", true);
-            //update settings
-            selected_team = d.key;
-            selected_year = +d.start;
-            selected_year_min = +d.start;
-            selected_year_max = +d.end;
-            //update graphs
-            Graph1.updateGraph();
-            Graph2.updateGraph();
-        });
-
-    //custom button functionality
-    d3.select("#submit-custom")
-        .on("click", function(){
-            //update buttons
-            dynasty_buttons.classed("mdl-button--colored", false);
-            d3.select(this).classed("mdl-button--colored", true);
-            //update settings
-            selected_team = d3.select("#custom-team").property("value");
-            selected_year_min = +d3.select("#custom-year-min").property("value");
-            selected_year = selected_year_min;
-            selected_year_max = +d3.select("#custom-year-max").property("value");
-            //update graphs
-            Graph1.updateGraph();
-            Graph2.updateGraph();
-        })
-
-
-    //first one is selected by default
-    d3.select("#dynasties_list").select("button").classed("mdl-button--colored", true);
-
-    //Show or hide unselected teams
-    d3.select("#checkbox-unselectedteam")
-        .on("change", function() {
-            Graph1.show_unselected = this.checked;
-            Graph1.updateGraph()
-    });
-
-    /* Setup Year Selection */
-
-    d3.select("#year-down-1")
-        .on("click", function(d){
-            if(selected_year > selected_year_min){
-                selected_year -= 1;
-                Graph2.updateGraph();
-            };
-        });
-
-    d3.select("#year-up-1")
-        .on("click", function(d){
-            if(selected_year < selected_year_max){
-                selected_year += 1;
-                Graph2.updateGraph();
-            };
-        });
-
-    /* Set xstat/ystat */
+    /* Selector for the statistic in graph1 */
     var g1_ystat = d3.select("#g1_ystat_select")
         .attr("name", "g1_ystat")
         .on("change", function(){
@@ -146,15 +51,17 @@ function draw(team_data) {
             Graph1.updateGraph();
         });
 
-    g1_ystat.selectAll("option")
+    var test = g1_ystat.selectAll("option")
         .data(Object.keys(stats))
-        .enter()
-        .append("option")
-        .attr("value", function(d){return d;})
-        .property("selected", function(d){return d === "winpercent";}) //default value
-        .text(function(d){return stats[d];});
+        .filter(function(d){return o_stats.indexOf(d)>=0})
+    console.log(test); //offensive stats for graph1
+        //.enter()
+        //.append("option")
+        //.attr("value", function(d){return d;})
+        //.property("selected", function(d){return d === "R";}) //default value
+        //.text(function(d){return stats[d];});
 
-
+    /* Selector for the statistic in graph2 */
     var g2_ystat = d3.select("#g2_ystat_select")
         .attr("name", "g2_ystat")
         .on("change", function(){
@@ -164,32 +71,12 @@ function draw(team_data) {
 
     g2_ystat.selectAll("option")
         .data(Object.keys(stats))
-        .enter()
-        .append("option")
-        .attr("value", function(d){return d;})
-        .property("selected", function(d){return d === "R";}) //default value
-        .text(function(d){return stats[d];});
-
-
-    var g2_xstat = d3.select("#g2_xstat_select")
-        .attr("name", "g2_xstat")
-        .on("change", function(){
-            Graph2.xstat = d3.select("#g2_xstat_select").property("value");
-            Graph2.updateGraph();
-        });
-
-    g2_xstat.selectAll("option")
-        .data(Object.keys(stats))
+        .filter(function(d){d in p_stats}) //pitching stats for graph2
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
         .property("selected", function(d){return d === "RA";}) //default value
         .text(function(d){return stats[d];});
-
-
-
-
-
 
     //Graph1 object
     var Graph1 = new Object();
@@ -201,7 +88,6 @@ function draw(team_data) {
 
     //Graph Display Parameters
     Graph1.ystat = d3.select("#g1_ystat_select").property("value");
-    Graph1.show_unselected = false; //Hide other teams by default
 
 
     //SVG layout structure
@@ -219,21 +105,10 @@ function draw(team_data) {
         .attr("width", Graph1.width)
         .attr("height", Graph1.height);
 
+    //Create groups
     Graph1.chart.append("g").attr("class", "axis x-axis");
     Graph1.chart.append("g").attr("class", "axis y-axis");
-    Graph1.chart.append("g").attr("class", "unselected").attr("clip-path", "url(#graph1-clip)");
-    Graph1.chart.append("g").attr("class", "selected").attr("clip-path", "url(#graph1-clip)");
-
-    //mini legend
-    Graph1.chart.append("circle")
-    	.attr("cx", Graph1.width - 120)
-    	.attr("cy", Graph1.height + Graph1.margin.bottom - 15)
-    	.attr('r', 5)
-        .style('fill', "#3f51b5")
-    Graph1.chart.append("text")
-    	.attr("x", Graph1.width - 110)
-    	.attr("y", Graph1.height + Graph1.margin.bottom - 10)
-    	.text("World Series Win");
+    Graph1.chart.append("g").attr("class", "data").attr("clip-path", "url(#graph1-clip)");
 
     //labels and title
     Graph1.chart.append("text")
@@ -629,8 +504,9 @@ function join_data(team_data, franchise_data) {
 function format_data(team_data) {
     var formatted_data = []
     team_data.forEach(function(d) {
-        formatted_data.push(
-        {
+        if (+d['yearID'] >= 1969){ //Filter out stats that are pre-1969
+            formatted_data.push(
+            {
             'franchName' : d['franchName'],
             'franchID' : d['franchID'],
             'year' : +d['yearID'],
@@ -638,30 +514,30 @@ function format_data(team_data) {
                "W" : +d['W'],
                "L" : +d['L'],
                "G" : +d['G'],
-            "winpercent" : (+d['W']/+d['G']), //Win Percentage
+               "winpercent" : (+d['W']/+d['G']), //Win Percentage
                "w_division" : d['DivWin'],
                "w_wildcard" : d['WCWin'],
                "w_league" : d['LgWin'],
                "w_worldseries" : d['WSWin'],
 
-               "R" : +d['R']*(162/+d['G']),
-               "AB" : +d['AB']*(162/+d['G']),
-               "H" : +d['H']*(162/+d['G']),
-               "2B" : +d['2B']*(162/+d['G']),
-               "3B" : +d['3B']*(162/+d['G']),
-               "HR" : +d['HR']*(162/+d['G']),
-               "BB" : +d['BB']*(162/+d['G']),
-               "SO" : +d['SO']*(162/+d['G']),
-               "SB" : +d['SB']*(162/+d['G']),
+               "R" : +d['R'],
+               "AB" : +d['AB'],
+               "H" : +d['H'],
+               "2B" : +d['2B'],
+               "3B" : +d['3B'],
+               "HR" : +d['HR'],
+               "BB" : +d['BB'],
+               "SO" : +d['SO'],
+               "SB" : +d['SB'],
 
-               "RA" : +d['RA']*(162/+d['G']),
+               "RA" : +d['RA'],
                "ERA" : +d['ERA'],
-               "CG" : +d['CG']*(162/+d['G']),
-               "BBA" : +d['BBA']*(162/+d['G']),
-               "SOA" : +d['SOA']*(162/+d['G']),
-               "E" : +d['E']*(162/+d['G'])
-           }
-           );
+               "CG" : +d['CG'],
+               "BBA" : +d['BBA'],
+               "SOA" : +d['SOA'],
+               "E" : +d['E']
+            });
+        };
     });
     return formatted_data;
 };
