@@ -1,20 +1,35 @@
 function agg_franchise(leaves){
     return {
-        'franchName' : leaves[0]['franchName'],
         'seasons' : leaves
     };
+};
+
+//function to divide teams up for a given season based on their playoff finish
+function playoff_status(team){
+    if(team['w_worldseries']==='Y'){
+        return "ws_win";
+    } else if (team['w_league']==='Y'){
+        return "ws_loss";
+    } else if (team['w_division']==="Y" || team['w_wildcard']==="Y"){
+        return "playoffs";
+    } else {
+        return "none";
+    }
 };
 
 function draw(team_data) {
     "use strict";
 
     // Group world series winners together
-    var ws_winners = d3.nest()
-        .key(function(d) {return d['franchID'];})
+    var grouped = d3.nest()
+        .key(playoff_status)
         .rollup(agg_franchise)
         .sortKeys(d3.ascending)
         .entries(team_data);
 
+    console.log(grouped);
+
+    //Create a dictionary to give better text labels for statistics
     var stats = {
     'winpercent':'Winning Percentage',
     'W':'Wins',
@@ -51,15 +66,13 @@ function draw(team_data) {
             Graph1.updateGraph();
         });
 
-    var test = g1_ystat.selectAll("option")
-        .data(Object.keys(stats))
-        .filter(function(d){return o_stats.indexOf(d)>=0})
-    console.log(test); //offensive stats for graph1
-        //.enter()
-        //.append("option")
-        //.attr("value", function(d){return d;})
-        //.property("selected", function(d){return d === "R";}) //default value
-        //.text(function(d){return stats[d];});
+    g1_ystat.selectAll("option")
+        .data(o_stats) //offensive stats for graph1
+        .enter()
+        .append("option")
+        .attr("value", function(d){return d;})
+        .property("selected", function(d){return d === "R";}) //default value
+        .text(function(d){return stats[d];});
 
     /* Selector for the statistic in graph2 */
     var g2_ystat = d3.select("#g2_ystat_select")
@@ -70,15 +83,14 @@ function draw(team_data) {
         });
 
     g2_ystat.selectAll("option")
-        .data(Object.keys(stats))
-        .filter(function(d){d in p_stats}) //pitching stats for graph2
+        .data(p_stats) //pitching stats for graph2
         .enter()
         .append("option")
         .attr("value", function(d){return d;})
         .property("selected", function(d){return d === "RA";}) //default value
         .text(function(d){return stats[d];});
 
-    //Graph1 object
+    //Graph1 object will show offensive stats
     var Graph1 = new Object();
 
     //size
@@ -88,7 +100,6 @@ function draw(team_data) {
 
     //Graph Display Parameters
     Graph1.ystat = d3.select("#g1_ystat_select").property("value");
-
 
     //SVG layout structure
     Graph1.svg = d3.select("#graph1").select("svg")
