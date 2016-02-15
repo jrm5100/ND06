@@ -3,7 +3,7 @@
 <head>
 	<!-- Meta -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Dynasties in MLB</title>
+	<title>Reversion to the mean in MLB</title>
 	<!-- Font -->
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 	<!-- Style and JS -->
@@ -20,38 +20,24 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
     	<div class="mdl-layout__header-row">
-    		<span class="mdl-layout-title">Dynasties in Major League Baseball</span>
+    		<span class="mdl-layout-title">Reversion to the mean in Major League Baseball</span>
     	</div>
 	</header>
 	<main class="mdl-layout__content">
 		<div class="mdl-grid", id="grid">
 			<!-- Instructions -->
 			<div id="intro" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-				<h4>What is more important- Pitching or Hitting?</h4>
-				<p>Lorem Ipsum Baseball</p>
+				<h4>What happens before and after a world series win?</h4>
+				<p>In Major League Baseball the ultimate goal is winning the World Series.  At the end of the season (as in most professional sports leagues) teams that performed well will try to make a few minor changes to improve the team without risking what they already have, while poor performing teams may decide to "rebuild" and dramatically reshape their roster.  How does this actually work out in reality?  It would be helpful to look at the performance of teams before they win the world series and after.</p>
 				<p>The data comes from Lahman's Baseball Database.  Data prior to the 1969 season has been excluded since this was the first season with league play and an expanded postseason.</p>			
 			</div>
-			<!--Graph 1 (Offense)-->
-			<div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
+			<!--Graph 1 For each season result, plot next years change in win % and season result probability-->
+			<div id="graph1" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col">
 				<svg></svg>
 			</div>
-			<!--Graph 1 (Offense) Controls -->
-			<div id="graph1-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
-				<h5>Offense</h5>
-				<label>Show: 
-					<select id="g1_ystat_select" class="stat-select mdl-button mdl-button--raised"></select>
-				</label>
-			</div>
-			<!--Graph 2 (Pitching/Defense)-->
-			<div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--8-col">
+			<!--Graph 2 Plot %change in runs scored and runs allowed in scatterplot-->
+			<div id="graph2" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--6-col">
 				<svg></svg>
-			</div>
-			<!--Graph 2 (Pitching/Defense) Controls -->
-			<div id="graph2-controls" class="controldiv mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--4-col">
-				<h5>Defense</h5>
-				<label>Show: 
-					<select id="g2_ystat_select" class="stat-select mdl-button mdl-button--raised"></select>
-				</label>
 			</div>
 			</div>		
 	</main>
