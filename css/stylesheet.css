@@ -7,50 +7,21 @@ body{
 	width: 980px;
 }
 
-#dynasties h4{
-	text-align: center;
-}
-#dynasties li{
-	list-style-type: none;
-	text-align: center;
-}
-#dynasties button{
-	width: 80%;
-	margin: 5px;
+h1{
+    font-size: 2em;
 }
 
-#intro,
-.controldiv{
-	padding: 10px 10px 10px 15px;
-}
-
-.label{
-	text-anchor: middle;
-	font-size: 1.2em;
-}
-.title{
-	font-size: 1.5em;
+.mdl-cell{
+    padding:10px;
 }
 
 .axis path,
 .axis line {
   fill: none;
-  stroke: black;
+  stroke: #000;
   shape-rendering: crispEdges;
 }
 
-.tick line{
-    opacity: 0.2;
-  }
-
-#custom-dynasty {
-	padding: 15px;
-	float: left;
-}
-#custom-dynasty-description{
-	padding: 15px;
-	float:left;
-}
-#submit-custom{
-	float:right;
+.y.axis path {
+  display: none;
 }

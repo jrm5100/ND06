@@ -32,8 +32,7 @@ I decided to include two charts that are connected- selecting a team will highli
 * http://www.getmdl.io/
 * http://www.seanlahman.com/baseball-archive/statistics/
 * http://bl.ocks.org/mbostock/3019563
-* http://espn.go.com/blog/sweetspot/post/_/id/54157/ranking-baseballs-greatest-dynasties
-
+* http://bl.ocks.org/mbostock/3887051
 
 # Licenses
 Data is from Lahman's Baseball Database (copyright 1996-2015 by Sean Lahman).
