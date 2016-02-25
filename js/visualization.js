@@ -1,118 +1,125 @@
-function agg_finishes(leaves){
-    var total = leaves.length;
-    return [
-    {'key':'WS Win', 'value':leaves.filter(function(d){return d['finish']==="WS Win";}).length/total},
-    {'key':'WS Loss', 'value': leaves.filter(function(d){return d['finish']==="WS Loss";}).length/total},
-    {'key':'Playoffs', 'value': leaves.filter(function(d){return d['finish']==="Playoffs";}).length/total},
-    {'key':'No Playoffs', 'value': leaves.filter(function(d){return d['finish']==="No Playoffs";}).length/total}
-    ]
+function agg_years(leaves){
+    var max_R = d3.max(leaves, function(d){return d['R'];}),
+        max_R_teams = leaves.filter(function(d){return d['R']===max_R}),
+        min_RA = d3.min(leaves, function(d){return d['RA'];}),
+        min_RA_teams = leaves.filter(function(d){return d['RA']===min_RA})
+    return {
+        'max_R' : max_R,
+        'min_R' : d3.min(leaves, function(d){return d['R'];}),
+        'median_R' : d3.median(leaves, function(d){return d['R'];}),
+        //Concat an array of teams that have the max R value in case of ties
+        'max_R_team_ID' : max_R_teams.map(function(d){return d['franchID'];}).join(),
+        'max_R_team_name' : max_R_teams.map(function(d){return d['name'];}).join(),
+        'max_R_league' : max_R_teams.map(function(d){return d['league'];}).join(),
+
+        
+        'max_RA' : d3.max(leaves, function(d){return d['RA'];}),
+        'min_RA' : min_RA,
+        'median_RA' : d3.median(leaves, function(d){return d['RA'];}),
+        //Concat an array of teams that have the min RA value in case of ties
+        'min_RA_team_ID' : min_RA_teams.map(function(d){return d['franchID'];}).join(),
+        'min_RA_team_name' : min_RA_teams.map(function(d){return d['name'];}).join(),
+        'min_RA_league' : min_RA_teams.map(function(d){return d['league'];}).join()
+    };
 };
 
-function plot_graph1(data) {
+function plot_graph(data) {
 
     //combine data by finish and finish_next
     data_nested = d3.nest()
-        .key(function(d){return d['finish_next'];})
-        .rollup(agg_finishes)
+        .key(function(d){return d['year'];})
+        .rollup(agg_years)
         .entries(data);
 
-    var margin = {top: 20, right: 20, bottom: 50, left: 80},
-        width = 460 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+    console.log(data_nested);
 
-    var finishNames = ['No Playoffs', 'Playoffs', 'WS Loss', 'WS Win'];
+    var margin = {top: 20, right: 50, bottom: 50, left: 50},
+        width = 950 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom,
+        middlespacing = 20;
 
-    //first x scale for finish in some given year
-    var y0 = d3.scale.ordinal()
-        .rangeRoundBands([height, 0], .1)
-        .domain(finishNames);
+    //yScale for the year
+    var yScale = d3.scale.linear()
+        .range([height, 0])
+        .domain(d3.extent(data_nested, function(d){return d['key']}));
 
-    //second x scale for finish in the following year
-    var y1 = d3.scale.ordinal()
-        .rangeRoundBands([y0.rangeBand(), 0])
-        .domain(finishNames);
+    //xScale on left for R
+    var xScale_R = d3.scale.linear()
+        .range([(width/2)-middlespacing, 0]) //backwards range so high numbers = more left
+        .domain(d3.extent(data, function(d){return d['R']}));
 
-    //y scale and color both for fraction of teams with finish making that finish_next
-    var x = d3.scale.linear()
-        .range([0, width])
-        .domain([0,1]);
+    //xScale on right for RA
+    var xScale_RA = d3.scale.linear()
+        .range([width, (width/2)+middlespacing]) //backwards range so low numbers = more right
+        .domain(d3.extent(data, function(d){return d['R']}));    
 
+    //color by league
     var color = d3.scale.ordinal()
-        .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b"]);
+        .range(["#98abc5", "#8a89a6"]) //fix color later
+        .domain(['AL', 'NL'])
 
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom")
-        .tickFormat(d3.format(".0%"));
+    var xAxis_R = d3.svg.axis()
+        .scale(xScale_R)
+        .orient("bottom");
 
-    var yAxis = d3.svg.axis()
-        .scale(y0)
+    var xAxis_RA = d3.svg.axis()
+        .scale(xScale_RA)
+        .orient("bottom");
+
+    var yAxisleft = d3.svg.axis()
+        .scale(yScale)
         .orient("left");
 
-    var svg = d3.select("#graph1").append("svg")
+    var yAxisright = d3.svg.axis()
+        .scale(yScale)
+        .orient("right");
+
+    var svg = d3.select("#graph").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
+    //y-axis needs fixing for position
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxisleft)
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + width + ",0)")
+        .call(yAxisright)
+    
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis_R)
+        .append("text")
+        .style("text-anchor", "middle")
+        .attr("x", width/4)
+        .attr("y", -height)
+        .text("Teams with most Runs Scored");
 
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
+        .call(xAxis_RA)
         .append("text")
         .style("text-anchor", "middle")
-        .attr("x", width/2)
-        .attr("y", 45)
-        .text("Fraction of Teams (1969-2013)");
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-
-    var finish = svg.selectAll(".finish")
-        .data(data_nested)
-        .enter().append("g")
-        .attr("class", "finish")
-        .attr("transform", function(d) { return "translate(0," + y0(d['key']) + ")"; });
-
-    finish.selectAll("rect")
-        .data(function(d) { return d.values; })
-        .enter().append("rect")
-        .attr("width", function(d) { return x(d.value); })
-        .attr("x", function(d) { return 0; })
-        .attr("y", function(d) { return y1(d.key); })
-        .attr("height", y1.rangeBand())
-        .style("fill", function(d) { return color(d.key); });
-
-    var legend = svg.selectAll(".legend")
-        .data(finishNames.slice().reverse())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-    legend.append("rect")
-        .attr("x", width - 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", color);
-
-    legend.append("text")
-        .attr("x", width - 24)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text(function(d) { return d; });
-
+        .attr("x", 3*width/4)
+        .attr("y", -height)
+        .text("Teams with least Runs Allowed");
 
 };
 
 function draw(data) {
     "use strict";
 
+    //Filter data to just AL/NL if a button is selected and re-call plot_graph
     console.log(data);
 
     //Group for first plot
-    plot_graph1(data);
+    plot_graph(data);
 };
 
 function format_data(team_data) {
@@ -120,50 +127,19 @@ function format_data(team_data) {
     var formatted_data = []
     team_data.forEach(function(d) {
         if (+d['yearID'] >= 1969){ //Filter out stats that are pre-1969
-            var tmpdata = {};
-            tmpdata['franchID'] = d['franchID']
-            tmpdata['name'] = d['name'];
-            tmpdata['year'] = +d['yearID'];
-            tmpdata['W'] = +d['W'];
-            tmpdata['R'] = +d['R'];
-            tmpdata['RA'] = +d['RA'];
-
-            //encode season result
-            if (d['WSWin'] === "Y"){
-              tmpdata['finish'] = 'WS Win';
-          } else if (d['LgWin'] === "Y"){
-              tmpdata['finish'] = 'WS Loss';
-          } else if (d['DivWin'] === "Y" || d['WCWin'] === "Y"){
-              tmpdata['finish'] = 'Playoffs';
-          } else {
-              tmpdata['finish'] = 'No Playoffs';
-          }
-
+            var tmpdata = {
+            'franchID' : d['franchID'],
+            'name' : d['name'],
+            'league' : d['lgID'],
+            'year' : +d['yearID'],
+            'R' : +d['R'],
+            'RA' : +d['RA'],
+            };
           formatted_data.push(tmpdata);
-      };
-  });
+        };
+    });
 
-    //Iterate through data to get next-season finish and change in stats
-    var maxyear = d3.max(formatted_data, function(d){return d['year'];});
-    var diff_data = [];
-    formatted_data.forEach(function(current){
-      if (current['year'] < maxyear) { //can't calculate next-year results for the final year
-        //iterate team/season entries and find the matching team entry for the following year
-    next = formatted_data.filter(function(n){return n['year']===current['year']+1 && n['franchID']===current['franchID']})[0];
-    diff_data.push({
-        'franchID' : current['franchID'],
-        'name' : current['name'],
-        'year' : current['year'],
-        'finish' : current['finish'],
-        'finish_next' : next['finish'],
-        'delta_W' : next['W']-current['W'],
-        'delta_R' : next['R']-current['R'],
-        'delta_RA' : next['RA']-current['RA']
-    })
-}
-});
-
-    return diff_data;
+    return formatted_data;
 };
 
 /* Read in team data csv file, format the data, and run the draw function*/

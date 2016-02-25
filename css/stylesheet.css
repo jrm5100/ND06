@@ -21,7 +21,3 @@ h1{
   stroke: #000;
   shape-rendering: crispEdges;
 }
-
-.y.axis path {
-  display: none;
-}
