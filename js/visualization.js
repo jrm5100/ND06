@@ -23,10 +23,11 @@ function agg_years(leaves){
     };
 };
 
-function plot_graph(data) {
+function draw(data) {
+    "use strict";
 
-    //combine data by finish and finish_next
-    data_nested = d3.nest()
+    //nest data by year and calculate min/maxes
+    var data_nested = d3.nest()
         .key(function(d){return d['year'];})
         .rollup(agg_years)
         .entries(data);
@@ -35,13 +36,13 @@ function plot_graph(data) {
 
     var margin = {top: 20, right: 50, bottom: 50, left: 50},
         width = 950 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom,
+        height = 800 - margin.top - margin.bottom,
         middlespacing = 20;
 
     //yScale for the year
-    var yScale = d3.scale.linear()
-        .range([height, 0])
-        .domain(d3.extent(data_nested, function(d){return d['key']}));
+    var yScale = d3.scale.ordinal()
+        .rangeRoundBands([height, 0])
+        .domain(data_nested.map(function(d){return d['key'];}));
 
     //xScale on left for R
     var xScale_R = d3.scale.linear()
@@ -79,7 +80,7 @@ function plot_graph(data) {
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
+
     //y-axis needs fixing for position
     svg.append("g")
         .attr("class", "y axis")
@@ -110,16 +111,36 @@ function plot_graph(data) {
         .attr("y", -height)
         .text("Teams with least Runs Allowed");
 
-};
+    var Rbars = svg.selectAll(".Rbar")
+        .data(data_nested, function(d){return d['key'];})
+        
+    Rbars.transition().duration(500)
+        .attr("width", function(d){return d.values['max_R']});
 
-function draw(data) {
-    "use strict";
+    Rbars.enter()
+        .append("rect")
+        .attr("class", "Rbar")
+        .attr("x", function(d){return xScale_R(d.values['max_R']);})
+        .attr("y", function(d){return yScale(+d['key']);})
+        .attr("height", yScale.rangeBand()) //set bar height to the max width
+        .attr("width", function(d){return ((width/2)-middlespacing) - xScale_R(d.values['max_R']);})
+        .attr("fill", function(d){return color(d.values['max_R_league']);});
 
-    //Filter data to just AL/NL if a button is selected and re-call plot_graph
-    console.log(data);
+    var RAbars = svg.append("g")
+        .selectAll(".RAbar")
+        .data(data_nested, function(d){return d['key'];})
+        
+    RAbars.transition().duration(500)
+        .attr("width", function(d){return d.values['min_RA']});
 
-    //Group for first plot
-    plot_graph(data);
+    Rbars.enter()
+        .append("rect")
+        .attr("class", "RAbar")
+        .attr("x", (width/2)+middlespacing)
+        .attr("y", function(d){return yScale(+d['key']);})
+        .attr("height", yScale.rangeBand()) //set bar height to the max width
+        .attr("width", function(d){return xScale_RA(d.values['min_RA'])-((width/2)+middlespacing);})
+        .attr("fill", function(d){return color(d.values['min_RA_league']);})
 };
 
 function format_data(team_data) {
