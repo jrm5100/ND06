@@ -21,3 +21,8 @@ h1{
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+.x.axis path,
+.x.axis line {
+  display: none;
+}

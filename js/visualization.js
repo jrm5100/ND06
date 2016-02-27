@@ -34,46 +34,42 @@ function draw(data) {
 
     console.log(data_nested);
 
-    var margin = {top: 20, right: 50, bottom: 50, left: 50},
+    var margin = {top: 10, right: 10, bottom: 10, left: 50},
         width = 950 - margin.left - margin.right,
-        height = 800 - margin.top - margin.bottom,
+        height = 600 - margin.top - margin.bottom,
         middlespacing = 20;
 
     //yScale for the year
-    var yScale = d3.scale.ordinal()
-        .rangeRoundBands([height, 0])
+    var xScale = d3.scale.ordinal()
+        .rangeRoundBands([0, width])
         .domain(data_nested.map(function(d){return d['key'];}));
 
-    //xScale on left for R
-    var xScale_R = d3.scale.linear()
-        .range([(width/2)-middlespacing, 0]) //backwards range so high numbers = more left
-        .domain(d3.extent(data, function(d){return d['R']}));
+    //xScale for R
+    var yScale_R = d3.scale.linear()
+        .range([(height/2)-middlespacing, 0])
+        .domain(d3.extent(data_nested, function(d){return d.values['max_R']}));
 
-    //xScale on right for RA
-    var xScale_RA = d3.scale.linear()
-        .range([width, (width/2)+middlespacing]) //backwards range so low numbers = more right
-        .domain(d3.extent(data, function(d){return d['R']}));    
+    //xScale for RA
+    var yScale_RA = d3.scale.linear()
+        .range([(height/2)+middlespacing, height])
+        .domain(d3.extent(data_nested, function(d){return d.values['min_RA']}));    
 
     //color by league
     var color = d3.scale.ordinal()
         .range(["#98abc5", "#8a89a6"]) //fix color later
         .domain(['AL', 'NL'])
 
-    var xAxis_R = d3.svg.axis()
-        .scale(xScale_R)
+    var xAxis = d3.svg.axis()
+        .scale(xScale)
         .orient("bottom");
 
-    var xAxis_RA = d3.svg.axis()
-        .scale(xScale_RA)
-        .orient("bottom");
-
-    var yAxisleft = d3.svg.axis()
-        .scale(yScale)
+    var yAxis_R = d3.svg.axis()
+        .scale(yScale_R)
         .orient("left");
 
-    var yAxisright = d3.svg.axis()
-        .scale(yScale)
-        .orient("right");
+    var yAxis_RA = d3.svg.axis()
+        .scale(yScale_RA)
+        .orient("left");
 
     var svg = d3.select("#graph").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -83,64 +79,73 @@ function draw(data) {
 
     //y-axis needs fixing for position
     svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxisleft)
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .attr("transform", "translate(" + width + ",0)")
-        .call(yAxisright)
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height/2 + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .attr("y", 0)
+        .attr("x", 0)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(90)")
+        .style("text-anchor", "middle");
     
     svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis_R)
+        .attr("class", "y axis")
+        .call(yAxis_R)
         .append("text")
         .style("text-anchor", "middle")
-        .attr("x", width/4)
-        .attr("y", -height)
-        .text("Teams with most Runs Scored");
+        .attr("x", -20)
+        .attr("y", 0)
+        .text("Teams with most Runs Scored each Season");
 
     svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis_RA)
+        .attr("class", "y axis")
+        .call(yAxis_RA)
         .append("text")
         .style("text-anchor", "middle")
         .attr("x", 3*width/4)
         .attr("y", -height)
-        .text("Teams with least Runs Allowed");
+        .text("Teams with the least Runs Allowed each Season");
 
-    var Rbars = svg.selectAll(".Rbar")
-        .data(data_nested, function(d){return d['key'];})
-        
+    var Rbars = svg.append("g")
+        .attr("id", "Rbar-group")
+        .selectAll(".Rbar")
+        .data(data_nested, function(d){return d['key'];}) //key is the year
+    
+    //Updates    
     Rbars.transition().duration(500)
-        .attr("width", function(d){return d.values['max_R']});
+        .attr("y", function(d){return yScale_R(d.values['max_R']);})
+        .attr("height", function(d){return d.values['max_R']});
 
+    //new data
     Rbars.enter()
         .append("rect")
         .attr("class", "Rbar")
-        .attr("x", function(d){return xScale_R(d.values['max_R']);})
-        .attr("y", function(d){return yScale(+d['key']);})
-        .attr("height", yScale.rangeBand()) //set bar height to the max width
-        .attr("width", function(d){return ((width/2)-middlespacing) - xScale_R(d.values['max_R']);})
+        .attr("x", function(d){return xScale(+d['key']);})
+        .attr("y", function(d){return yScale_R(d.values['max_R']);})//top of rect
+        .attr("width", xScale.rangeBand()-2) //set bar width to the max minus some spacing
+        .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between y value and bottom
         .attr("fill", function(d){return color(d.values['max_R_league']);});
 
     var RAbars = svg.append("g")
+        .attr("id", "RAbar-group")
         .selectAll(".RAbar")
-        .data(data_nested, function(d){return d['key'];})
-        
+        .data(data_nested, function(d){return d['key'];}) //key is the year
+    
+    //updates   
     RAbars.transition().duration(500)
-        .attr("width", function(d){return d.values['min_RA']});
+        .attr("height", function(d){return yScale_RA(d.values['min_RA']);});
 
+    //new data
     Rbars.enter()
         .append("rect")
         .attr("class", "RAbar")
-        .attr("x", (width/2)+middlespacing)
-        .attr("y", function(d){return yScale(+d['key']);})
-        .attr("height", yScale.rangeBand()) //set bar height to the max width
-        .attr("width", function(d){return xScale_RA(d.values['min_RA'])-((width/2)+middlespacing);})
-        .attr("fill", function(d){return color(d.values['min_RA_league']);})
+        .attr("x", function(d){return xScale(+d['key']);})
+        .attr("y", yScale_RA.range()[0])
+        .attr("width", xScale.rangeBand()-2) //set bar width to the max minus some spacing
+        .attr("height", function(d){return yScale_RA(d.values['min_RA']) - yScale_RA.range()[0];})
+        .attr("fill", function(d){return color(d.values['min_RA_league']);});
+
 };
 
 function format_data(team_data) {
