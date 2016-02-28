@@ -42,3 +42,15 @@ body{
 .label{
     font-size: 1.3em;
 }
+
+.Rbar,
+.RAbar{
+    opacity: 0.7;
+}
+
+.Rbar:hover,
+.RAbar:hover{
+    stroke-width:2px;
+    stroke:black;
+    opacity: 1;
+}
