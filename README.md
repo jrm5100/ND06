@@ -32,7 +32,7 @@ I decided to include two charts that are connected- selecting a team will highli
 * http://www.getmdl.io/
 * http://www.seanlahman.com/baseball-archive/statistics/
 * http://bl.ocks.org/mbostock/3019563 (margins)
-* http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 (tooltips)
+* http://chimera.labs.oreilly.com/books/1230000000345/ch10.html#_html_div_tooltips (tooltips)
 
 # Licenses
 Data is from Lahman's Baseball Database (copyright 1996-2015 by Sean Lahman).

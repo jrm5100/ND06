@@ -21,7 +21,7 @@
 	<main class="mdl-layout__content">
 		<div class="mdl-grid", id="grid">
 			<div id="title" class="mdl-color--primary mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-				<span>An AL team usually scores the most runs and an NL team usually allows the fewest</span>
+				<span>An AL team usually scores the most runs and an NL team often allows the fewest</span>
 			</div>
 			<div id="graph" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
 			</div>	
@@ -29,6 +29,19 @@
 				<p>In Major League Baseball there are two leages- the American League and the National League- and most games are played between teams in the same league.  One of the primary differences is that pitchers bat in the NL while the AL (since 1973) replaces them with more skilled "Designated Hitters".  This has had a profound effect on the scoring in each league.  The team that scores the most runs is almost always from the American League while the team that gives up the fewest runs is almost always from the National League.</p>
 				<p>The data comes from Lahman's Baseball Database.  Data prior to the 1969 season has been excluded since this was the first season with league play and an expanded postseason.</p>			
 			</div>
+			<div id="tooltip_R" class="hidden">
+				<p><strong id="tt_year"></strong></p>
+        		<p>Max Runs Scored: <span id='tt_maxR'></span> by <span id='tt_maxR_team'></span> (<span id='tt_maxR_league'></span>)</p>
+        		<p>Median Runs Scored: <span id='tt_medianR'></span></p>
+        		<p>Min Runs Scored: <span id='tt_minR'></span></p>
+        	</div>
+			<div id="tooltip_RA" class="hidden">
+				<p><strong id="tt_year"></strong></p>
+        		<p>Min Runs Allowed: <span id='tt_minRA'></span> by <span id='tt_minRA_team'></span> (<span id='tt_minRA_league'></span>)</p>
+        		<p>Median Runs Allowed: <span id='tt_medianRA'></span></p>
+        		<p>Max Runs Allowed: <span id='tt_maxRA'></span></p>
+        	</div>
+</div>
 	</main>
 	</div>
 	<!--D3 Visualization Scripts -->

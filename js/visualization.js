@@ -23,15 +23,55 @@ function agg_years(leaves){
     };
 };
 
-//Function to update tooltip and show it
-function show_tooltip(data, mousepos){
-    console.log(data);
-    console.log(mousepos);
-}
-//function to hide tooltip
-function hide_tooltip(){
-    console.log("hide");
-}
+function show_tooltip_R(datum){
+    var tt = d3.select("#tooltip_R")
+    //Update the tooltip position and value
+    var xPosition = d3.event.pageX,
+        yPosition = d3.event.pageY;
+    tt.style("left", (xPosition + 15) + "px")
+        .style("top", yPosition + "px")
+    
+    //fill in values
+    tt.select("#tt_year").text(datum.key);
+    tt.select("#tt_maxR").text(datum.values['max_R']);
+    tt.select("#tt_maxR_team").text(datum.values['max_R_team_name']);
+    tt.select("#tt_maxR_league").text(datum.values['max_R_league']);
+    tt.select("#tt_medianR").text(datum.values['median_R']);
+    tt.select("#tt_minR").text(datum.values['min_R']);
+    
+    //Show the tooltip
+    tt.classed("hidden", false);
+};
+
+function show_tooltip_RA(datum){
+    var tt = d3.select("#tooltip_RA")
+    //Update the tooltip position and value
+    var xPosition = d3.event.pageX,
+        yPosition = d3.event.pageY;
+    tt.style("left", (xPosition + 15) + "px")
+        .style("top", yPosition + "px")
+    
+    //fill in values
+    tt.select("#tt_year").text(datum.key);
+    tt.select("#tt_minRA").text(datum.values['min_RA']);
+    tt.select("#tt_minRA_team").text(datum.values['min_RA_team_name']);
+    tt.select("#tt_minRA_league").text(datum.values['min_RA_league']);
+    tt.select("#tt_medianRA").text(datum.values['median_RA']);
+    tt.select("#tt_maxRA").text(datum.values['max_RA']);
+
+    //Show the tooltip
+    tt.classed("hidden", false);
+};
+
+function hide_tooltip_R(){
+    //Hide the tooltip
+    d3.select("#tooltip_R").classed("hidden", true);
+};
+
+function hide_tooltip_RA(){
+    //Hide the tooltip
+    d3.select("#tooltip_RA").classed("hidden", true);
+};
 
 function draw(data) {
     "use strict";
@@ -46,6 +86,12 @@ function draw(data) {
         width = 950 - margin.left - margin.right,
         height = 450 - margin.top - margin.bottom,
         middlespacing = 20;
+
+    var svg = d3.select("#graph").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //yScale for the year
     var xScale = d3.scale.ordinal()
@@ -80,12 +126,6 @@ function draw(data) {
     var yAxis_RA = d3.svg.axis()
         .scale(yScale_RA)
         .orient("left");
-
-    var svg = d3.select("#graph").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     svg.append("g")
         .attr("class", "x axis")
@@ -138,8 +178,8 @@ function draw(data) {
             .attr("width", barwidth)
             .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between y value and bottom
             .attr("fill", function(d){return color(d.values['max_R_league']);})
-            .on("mouseover", function(d) {show_tooltip(d, d3.mouse(this));})
-            .on("mouseout", hide_tooltip);
+            .on("mouseover", function(d) {show_tooltip_R(d);})
+            .on("mouseout", hide_tooltip_R);
 
     chart_R.selectAll(".median-marker")
         .data(data_nested, function(d){return d['key'];}) //key is the year
@@ -165,8 +205,8 @@ function draw(data) {
             .attr("width", barwidth)
             .attr("height", function(d){return yScale_RA(d.values['min_RA']);})
             .attr("fill", function(d){return color(d.values['min_RA_league']);})
-            .on("mouseover", function(d) {show_tooltip(d, d3.mouse(this));})
-            .on("mouseout", hide_tooltip);
+            .on("mouseover", function(d) {show_tooltip_RA(d);})
+            .on("mouseout", hide_tooltip_RA);
 
 
     chart_RA.selectAll(".median-marker")
