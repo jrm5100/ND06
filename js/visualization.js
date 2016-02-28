@@ -1,3 +1,4 @@
+//Get selected stats for each year
 function agg_years(leaves){
     var max_R = d3.max(leaves, function(d){return d['R'];}),
         max_R_teams = leaves.filter(function(d){return d['R']===max_R}),
@@ -23,6 +24,7 @@ function agg_years(leaves){
     };
 };
 
+//Show a tooltip when hovering on a max runs scored rectangle
 function show_tooltip_R(datum){
     var tt = d3.select("#tooltip_R")
     //Update the tooltip position and value
@@ -43,6 +45,7 @@ function show_tooltip_R(datum){
     tt.classed("hidden", false);
 };
 
+//Show a tooltip when hovering on a min runs allowed rectangle
 function show_tooltip_RA(datum){
     var tt = d3.select("#tooltip_RA")
     //Update the tooltip position and value
@@ -64,12 +67,10 @@ function show_tooltip_RA(datum){
 };
 
 function hide_tooltip_R(){
-    //Hide the tooltip
     d3.select("#tooltip_R").classed("hidden", true);
 };
 
 function hide_tooltip_RA(){
-    //Hide the tooltip
     d3.select("#tooltip_RA").classed("hidden", true);
 };
 
@@ -82,6 +83,7 @@ function draw(data) {
         .rollup(agg_years)
         .entries(data);
 
+    //use conventional margin style
     var margin = {top: 10, right: 10, bottom: 50, left: 80},
         width = 950 - margin.left - margin.right,
         height = 450 - margin.top - margin.bottom,
@@ -93,23 +95,23 @@ function draw(data) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //yScale for the year
+    //xScale for the year
     var xScale = d3.scale.ordinal()
         .rangeRoundBands([0, width])
         .domain(data_nested.map(function(d){return d['key'];}));
 
-    //xScale for R
+    //yScale for R
     var yScale_R = d3.scale.linear()
         .range([(height/2)-middlespacing, 0])
         .domain([0, d3.max(data_nested, function(d){return d.values['max_R']})]);
 
-    //xScale for RA
+    //yScale for RA
     var yScale_RA = d3.scale.linear()
-        .range([0, (height/2)-middlespacing])
+        .range([0, (height/2)-middlespacing]) //reverse range to draw down from top
         .domain([0, d3.max(data_nested, function(d){return d.values['max_RA']})]);    
 
     //color by league
-    var colors = ["#98abc5", "#8a89a6"]
+    var colors = ["#00796b", "#536DFE"]
     var leagues = ["AL", "NL"]
     var color = d3.scale.ordinal()
         .range(colors)
@@ -131,7 +133,7 @@ function draw(data) {
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height/2 + ")")
         .call(xAxis)
-        .selectAll("text") //rotate tick labeels and center them between the graphs
+        .selectAll("text") //rotate tick labels and center them between the graphs
         .attr("y", 0)
         .attr("x", 0)
         .attr("dy", ".5em") //center in bars
@@ -142,7 +144,7 @@ function draw(data) {
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis_R)
-        .append("text")
+        .append("text") //add y label
         .attr("class", "label")
         .style("text-anchor", "middle")
         .attr("x", -height/4)
@@ -154,7 +156,7 @@ function draw(data) {
         .attr("class", "y axis")
         .attr("transform", "translate(0," + (height/2 +middlespacing) + ")")
         .call(yAxis_RA)
-        .append("text")
+        .append("text") //add y label
         .attr("class", "label")
         .style("text-anchor", "middle")
         .attr("x", -height/4)
@@ -162,8 +164,8 @@ function draw(data) {
         .attr("transform", "rotate(-90)")
         .text("Fewest Runs Allowed");
 
-    var barwidth = xScale.rangeBand()-2;
-    var median_marker_height = 4
+    var barwidth = xScale.rangeBand()-2; //bar width is width of a year in the scale minus 2
+    var median_marker_height = 4 //set the height of small rects used to show median values
 
     //Plot Run Data
     var chart_R = svg.append("g").attr("id", "chart_R")
@@ -176,7 +178,7 @@ function draw(data) {
             .attr("x", function(d){return xScale(+d['key']);})
             .attr("y", function(d){return yScale_R(d.values['max_R']);})//top of rect
             .attr("width", barwidth)
-            .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between y value and bottom
+            .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between top of rect and bottom
             .attr("fill", function(d){return color(d.values['max_R_league']);})
             .on("mouseover", function(d) {show_tooltip_R(d);})
             .on("mouseout", hide_tooltip_R);
@@ -220,8 +222,8 @@ function draw(data) {
             .attr("height", median_marker_height);
 
     //Add legend at the bottom
-    var legendtext = leagues.map(function(l){return "Team was from the " + l;}).concat(['Median Value']),
-        legendcolors = colors.concat(["#000000"]);
+    var legendtext = leagues.map(function(l){return "Team was from the " + l;}).concat(['Median Value']), //add "median" to legend label list
+        legendcolors = colors.concat(["#000000"]); //add black to legend color list for median marker
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -266,7 +268,7 @@ function draw(data) {
         .attr("y", height + 25)
         .attr("text-anchor", "middle")
         .attr("fill", "red")
-        .text("*Short season due to strikes");
+        .text("*short season due to strikes");
 
 };
 
