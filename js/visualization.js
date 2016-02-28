@@ -23,6 +23,16 @@ function agg_years(leaves){
     };
 };
 
+//Function to update tooltip and show it
+function show_tooltip(data, mousepos){
+    console.log(data);
+    console.log(mousepos);
+}
+//function to hide tooltip
+function hide_tooltip(){
+    console.log("hide");
+}
+
 function draw(data) {
     "use strict";
 
@@ -127,7 +137,9 @@ function draw(data) {
             .attr("y", function(d){return yScale_R(d.values['max_R']);})//top of rect
             .attr("width", barwidth)
             .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between y value and bottom
-            .attr("fill", function(d){return color(d.values['max_R_league']);});
+            .attr("fill", function(d){return color(d.values['max_R_league']);})
+            .on("mouseover", function(d) {show_tooltip(d, d3.mouse(this));})
+            .on("mouseout", hide_tooltip);
 
     chart_R.selectAll(".median-marker")
         .data(data_nested, function(d){return d['key'];}) //key is the year
@@ -152,7 +164,10 @@ function draw(data) {
             .attr("y", 0)
             .attr("width", barwidth)
             .attr("height", function(d){return yScale_RA(d.values['min_RA']);})
-            .attr("fill", function(d){return color(d.values['min_RA_league']);});
+            .attr("fill", function(d){return color(d.values['min_RA_league']);})
+            .on("mouseover", function(d) {show_tooltip(d, d3.mouse(this));})
+            .on("mouseout", hide_tooltip);
+
 
     chart_RA.selectAll(".median-marker")
         .data(data_nested, function(d){return d['key'];}) //key is the year
