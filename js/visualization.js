@@ -51,7 +51,7 @@ function draw(data) {
 
     //xScale for RA
     var yScale_RA = d3.scale.linear()
-        .range([(height/2)+middlespacing, height])
+        .range([0, (height/2)-middlespacing])
         .domain([0, d3.max(data_nested, function(d){return d.values['min_RA']})]);    
 
     //color by league
@@ -86,66 +86,56 @@ function draw(data) {
         .attr("x", 0)
         .attr("dy", ".35em") //center in bars
         .attr("transform", "rotate(90)")
-        .style("text-anchor", "middle");
+        .style("text-anchor", "middle")
+        .classed("short-season", function(d){return ['1972', '1981', '1994', '1995'].indexOf(d)>-1;}); //add a class if the season was strike-shortened
     
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis_R)
         .append("text")
         .style("text-anchor", "middle")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("transform", "rotate(90)")
-        .style("text-anchor", "middle")
-        .text("Teams with most Runs Scored each Season");
+        .attr("x", -height/4)
+        .attr("y", -50)
+        .attr("transform", "rotate(-90)")
+        .text("Most Runs Scored");
 
     svg.append("g")
         .attr("class", "y axis")
+        .attr("transform", "translate(0," + (height/2 +middlespacing) + ")")
         .call(yAxis_RA)
         .append("text")
         .style("text-anchor", "middle")
-        .attr("x", 3*width/4)
-        .attr("y", -height)
-        .text("Teams with the least Runs Allowed each Season");
+        .attr("x", -height/4)
+        .attr("y", -50)
+        .attr("transform", "rotate(-90)")
+        .text("Fewest Runs Allowed");
 
     var Rbars = svg.append("g")
         .attr("id", "Rbar-group")
         .selectAll(".Rbar")
         .data(data_nested, function(d){return d['key'];}) //key is the year
-    
-    //Updates    
-    Rbars.transition().duration(500)
-        .attr("y", function(d){return yScale_R(d.values['max_R']);})
-        .attr("height", function(d){return d.values['max_R']});
-
-    //new data
-    Rbars.enter()
-        .append("rect")
-        .attr("class", "Rbar")
-        .attr("x", function(d){return xScale(+d['key']);})
-        .attr("y", function(d){return yScale_R(d.values['max_R']);})//top of rect
-        .attr("width", xScale.rangeBand()-2) //set bar width to the max minus some spacing
-        .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between y value and bottom
-        .attr("fill", function(d){return color(d.values['max_R_league']);});
+        .enter()
+            .append("rect")
+            .attr("class", "Rbar")
+            .attr("x", function(d){return xScale(+d['key']);})
+            .attr("y", function(d){return yScale_R(d.values['max_R']);})//top of rect
+            .attr("width", xScale.rangeBand()-2) //set bar width to the max minus some spacing
+            .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between y value and bottom
+            .attr("fill", function(d){return color(d.values['max_R_league']);});
 
     var RAbars = svg.append("g")
         .attr("id", "RAbar-group")
+        .attr("transform", "translate(0," + (height/2 +middlespacing) + ")")
         .selectAll(".RAbar")
         .data(data_nested, function(d){return d['key'];}) //key is the year
-    
-    //updates   
-    RAbars.transition().duration(500)
-        .attr("height", function(d){return yScale_RA(d.values['min_RA']);});
-
-    //new data
-    Rbars.enter()
+        .enter()
         .append("rect")
-        .attr("class", "RAbar")
-        .attr("x", function(d){return xScale(+d['key']);})
-        .attr("y", yScale_RA.range()[0])
-        .attr("width", xScale.rangeBand()-2) //set bar width to the max minus some spacing
-        .attr("height", function(d){return yScale_RA(d.values['min_RA']) - yScale_RA.range()[0];})
-        .attr("fill", function(d){return color(d.values['min_RA_league']);});
+            .attr("class", "RAbar")
+            .attr("x", function(d){return xScale(+d['key']);})
+            .attr("y", yScale_RA.range()[0])
+            .attr("width", xScale.rangeBand()-2) //set bar width to the max minus some spacing
+            .attr("height", function(d){return yScale_RA(d.values['min_RA']);})
+            .attr("fill", function(d){return color(d.values['min_RA_league']);});
 
 };
 

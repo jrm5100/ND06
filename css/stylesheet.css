@@ -26,3 +26,7 @@ h1{
 .x.axis line {
   display: none;
 }
+
+.short-season{
+    fill:red;
+}
