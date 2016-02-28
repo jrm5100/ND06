@@ -30,3 +30,13 @@ h1{
 .short-season{
     fill:red;
 }
+
+.linechart {
+  fill: none;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+.label{
+    font-size: 1.3em;
+}

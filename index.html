@@ -17,23 +17,20 @@
 	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-    <header class="mdl-layout__header">
+    <div class="mdl-layout mdl-js-layout">
+    <header class="mdl-layout__header mdl-layout__header--scroll">
     	<div class="mdl-layout__header-row">
-    		<span class="mdl-layout-title">MLB teams that score the most and give up the least runs</span>
+    		<span class="mdl-layout-title">Teams with the most Runs Scored and fewest Runs Allowed each year</span>
     	</div>
 	</header>
 	<main class="mdl-layout__content">
 		<div class="mdl-grid", id="grid">
-			<!-- Instructions -->
+			<div id="graph" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+			</div>	
 			<div id="intro" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
 				<p>In Major League Baseball there are two leages- the American League and the National League- and most games are played between teams in the same league.  One of the primary differences is that pitchers bat in the NL while the AL (since 1973) replaces them with more skilled "Designated Hitters".  This has had a profound effect on the scoring in each league.  The team that scores the most runs is almost always from the American League while the team that gives up the fewest runs is almost always from the National League.</p>
 				<p>The data comes from Lahman's Baseball Database.  Data prior to the 1969 season has been excluded since this was the first season with league play and an expanded postseason.</p>			
 			</div>
-			<!--Graph 1 Heatplot of frequency of next season finish based on curent season finish-->
-			<div id="graph" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-			 <h1>Top Scoring and Top Pitching Teams in Baseball each Year</h1>
-			</div>	
 	</main>
 	</div>
 	<!--D3 Visualization Scripts -->
