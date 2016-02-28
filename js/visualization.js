@@ -34,9 +34,9 @@ function draw(data) {
 
     console.log(data_nested);
 
-    var margin = {top: 10, right: 10, bottom: 10, left: 50},
+    var margin = {top: 10, right: 10, bottom: 50, left: 80},
         width = 950 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom,
+        height = 450 - margin.top - margin.bottom,
         middlespacing = 20;
 
     //yScale for the year
@@ -47,12 +47,12 @@ function draw(data) {
     //xScale for R
     var yScale_R = d3.scale.linear()
         .range([(height/2)-middlespacing, 0])
-        .domain(d3.extent(data_nested, function(d){return d.values['max_R']}));
+        .domain([0, d3.max(data_nested, function(d){return d.values['max_R']})]);
 
     //xScale for RA
     var yScale_RA = d3.scale.linear()
         .range([(height/2)+middlespacing, height])
-        .domain(d3.extent(data_nested, function(d){return d.values['min_RA']}));    
+        .domain([0, d3.max(data_nested, function(d){return d.values['min_RA']})]);    
 
     //color by league
     var color = d3.scale.ordinal()
@@ -77,15 +77,14 @@ function draw(data) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //y-axis needs fixing for position
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height/2 + ")")
         .call(xAxis)
-        .selectAll("text")
+        .selectAll("text") //rotate tick labeels and center them between the graphs
         .attr("y", 0)
         .attr("x", 0)
-        .attr("dy", ".35em")
+        .attr("dy", ".35em") //center in bars
         .attr("transform", "rotate(90)")
         .style("text-anchor", "middle");
     
@@ -94,8 +93,10 @@ function draw(data) {
         .call(yAxis_R)
         .append("text")
         .style("text-anchor", "middle")
-        .attr("x", -20)
+        .attr("x", 0)
         .attr("y", 0)
+        .attr("transform", "rotate(90)")
+        .style("text-anchor", "middle")
         .text("Teams with most Runs Scored each Season");
 
     svg.append("g")
