@@ -7,8 +7,10 @@ body{
 	width: 980px;
 }
 
-h1{
-    font-size: 2em;
+#title{
+    font-size: 1.5em;
+    color: white;
+    text-align: center;
 }
 
 .mdl-cell{
