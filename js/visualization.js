@@ -1,26 +1,62 @@
-//Get selected stats for each year
+//Get best team in each league for R and RA every season
 function agg_years(leaves){
-    var max_R = d3.max(leaves, function(d){return d['R'];}),
-        max_R_teams = leaves.filter(function(d){return d['R']===max_R}),
-        min_RA = d3.min(leaves, function(d){return d['RA'];}),
-        min_RA_teams = leaves.filter(function(d){return d['RA']===min_RA})
-    return {
-        'max_R' : max_R,
-        'min_R' : d3.min(leaves, function(d){return d['R'];}),
-        'median_R' : d3.median(leaves, function(d){return d['R'];}),
-        //Concat an array of teams that have the max R value in case of ties
-        'max_R_team_ID' : max_R_teams.map(function(d){return d['franchID'];}).join(),
-        'max_R_team_name' : max_R_teams.map(function(d){return d['name'];}).join(),
-        'max_R_league' : max_R_teams.map(function(d){return d['league'];}).join(),
+    var al = leaves.filter(function(d){ return d['league']=="AL";}),
+        nl = leaves.filter(function(d){ return d['league']=="NL";});
+    
+    //Get max run value in each league and filter teams to find those with the same value
+    var maxR_AL = d3.max(al, function(d){return d['R'];}),
+        maxR_AL_teams = al.filter(function(d){return d['R']===maxR_AL}),
+        maxR_NL = d3.max(nl, function(d){return d['R'];}),
+        maxR_NL_teams = nl.filter(function(d){return d['R']===maxR_NL});
 
-        
-        'max_RA' : d3.max(leaves, function(d){return d['RA'];}),
-        'min_RA' : min_RA,
-        'median_RA' : d3.median(leaves, function(d){return d['RA'];}),
-        //Concat an array of teams that have the min RA value in case of ties
-        'min_RA_team_ID' : min_RA_teams.map(function(d){return d['franchID'];}).join(),
-        'min_RA_team_name' : min_RA_teams.map(function(d){return d['name'];}).join(),
-        'min_RA_league' : min_RA_teams.map(function(d){return d['league'];}).join()
+    var minRA_AL = d3.min(al, function(d){return d['R'];}),
+        minRA_AL_teams = al.filter(function(d){return d['R']===minRA_AL}),
+        minRA_NL = d3.min(nl, function(d){return d['R'];}),
+        minRA_NL_teams = nl.filter(function(d){return d['R']===minRA_NL});
+
+    //Record which league had the better team and what the value was
+    if (maxR_AL > maxR_NL){
+        var maxR = maxR_AL;
+        var maxR_league = "American League";
+    } else if (maxR_NL > maxR_AL) {
+        var maxR = maxR_NL;
+        var maxR_league = "National League";
+    } else { //tie just in case, but there aren't any in this data
+        var maxR = maxR_AL;
+        var maxR_league = "Tied";
+    };
+
+    if (minRA_AL < minRA_NL){
+        var minRA = minRA_AL;
+        var minRA_league = "American League";
+    } else if (minRA_NL < minRA_AL){
+        var minRA = minRA_NL;
+        var minRA_league = "National League";
+    } else { //tie just in case, but there aren't any in this data
+        var minRA = minRA_AL;
+        var minRA_league = "Tied";
+    };
+
+    return {
+
+        'maxR_AL' : maxR_AL,
+        'maxR_NL' : maxR_NL,
+
+        //concat team names if there are multiple
+        'maxR_AL_teams' : maxR_AL_teams.map(function(d){return d['name'];}).join(),
+        'maxR_NL_teams' : maxR_NL_teams.map(function(d){return d['name'];}).join(),
+
+        'minRA_AL' : minRA_AL,
+        'minRA_NL' : minRA_NL,
+
+        //concat team names if there are multiple
+        'minRA_AL_teams' : minRA_AL_teams.map(function(d){return d['name'];}).join(),
+        'minRA_NL_teams' : minRA_NL_teams.map(function(d){return d['name'];}).join(),
+
+        'maxR' : maxR,
+        'maxR_league' : maxR_league,
+        'minRA' : minRA,
+        'minRA_league' : minRA_league
     };
 };
 
@@ -35,11 +71,10 @@ function show_tooltip_R(datum){
     
     //fill in values
     tt.select("#tt_year").text(datum.key);
-    tt.select("#tt_maxR").text(datum.values['max_R']);
-    tt.select("#tt_maxR_team").text(datum.values['max_R_team_name']);
-    tt.select("#tt_maxR_league").text(datum.values['max_R_league']);
-    tt.select("#tt_medianR").text(datum.values['median_R']);
-    tt.select("#tt_minR").text(datum.values['min_R']);
+    tt.select("#tt_maxR_AL").text(datum.values['maxR_AL']);
+    tt.select("#tt_maxR_AL_teams").text(datum.values['maxR_AL_teams']);
+    tt.select("#tt_maxR_NL").text(datum.values['maxR_NL']);
+    tt.select("#tt_maxR_NL_teams").text(datum.values['maxR_NL_teams']);
     
     //Show the tooltip
     tt.classed("hidden", false);
@@ -56,11 +91,10 @@ function show_tooltip_RA(datum){
     
     //fill in values
     tt.select("#tt_year").text(datum.key);
-    tt.select("#tt_minRA").text(datum.values['min_RA']);
-    tt.select("#tt_minRA_team").text(datum.values['min_RA_team_name']);
-    tt.select("#tt_minRA_league").text(datum.values['min_RA_league']);
-    tt.select("#tt_medianRA").text(datum.values['median_RA']);
-    tt.select("#tt_maxRA").text(datum.values['max_RA']);
+    tt.select("#tt_minRA_AL").text(datum.values['minRA_AL']);
+    tt.select("#tt_minRA_AL_teams").text(datum.values['minRA_AL_teams']);
+    tt.select("#tt_minRA_NL").text(datum.values['minRA_NL']);
+    tt.select("#tt_minRA_NL_teams").text(datum.values['minRA_NL_teams']);
 
     //Show the tooltip
     tt.classed("hidden", false);
@@ -84,7 +118,7 @@ function draw(data) {
         .entries(data);
 
     //use conventional margin style
-    var margin = {top: 10, right: 10, bottom: 50, left: 80},
+    var margin = {top: 10, right: 10, bottom: 80, left: 80},
         width = 950 - margin.left - margin.right,
         height = 450 - margin.top - margin.bottom,
         middlespacing = 20;
@@ -103,16 +137,16 @@ function draw(data) {
     //yScale for R
     var yScale_R = d3.scale.linear()
         .range([(height/2)-middlespacing, 0])
-        .domain([0, d3.max(data_nested, function(d){return d.values['max_R']})]);
+        .domain([0, d3.max(data_nested, function(d){return d.values['maxR']})]);
 
     //yScale for RA
     var yScale_RA = d3.scale.linear()
         .range([0, (height/2)-middlespacing]) //reverse range to draw down from top
-        .domain([0, d3.max(data_nested, function(d){return d.values['max_RA']})]);    
+        .domain([0, d3.max(data_nested, function(d){return d.values['minRA']})]);    
 
     //color by league
     var colors = ["#00796b", "#536DFE"]
-    var leagues = ["AL", "NL"]
+    var leagues = ["American League", "National League"]
     var color = d3.scale.ordinal()
         .range(colors)
         .domain(leagues);
@@ -176,22 +210,12 @@ function draw(data) {
         .append("rect")
             .attr("class", "Rbar")
             .attr("x", function(d){return xScale(+d['key']);})
-            .attr("y", function(d){return yScale_R(d.values['max_R']);})//top of rect
+            .attr("y", function(d){return yScale_R(d.values['maxR']);})//top of rect
             .attr("width", barwidth)
-            .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['max_R']);}) //dist between top of rect and bottom
-            .attr("fill", function(d){return color(d.values['max_R_league']);})
+            .attr("height", function(d){return yScale_R.range()[0] - yScale_R(d.values['maxR']);}) //dist between top of rect and bottom
+            .attr("fill", function(d){return color(d.values['maxR_league']);})
             .on("mouseover", function(d) {show_tooltip_R(d);})
             .on("mouseout", hide_tooltip_R);
-
-    chart_R.selectAll(".median-marker")
-        .data(data_nested, function(d){return d['key'];}) //key is the year
-        .enter()
-        .append("rect")
-            .attr("class", "median-marker")
-            .attr("x", function(d){return xScale(d['key']);})
-            .attr("y", function(d){return yScale_R(d.values['median_R']);})
-            .attr("width", barwidth)
-            .attr("height",median_marker_height);
 
     var chart_RA = svg.append("g").attr("id", "chart_RA")
         .attr("transform", "translate(0," + (height/2 +middlespacing) + ")")
@@ -205,44 +229,28 @@ function draw(data) {
             .attr("x", function(d){return xScale(+d['key']);})
             .attr("y", 0)
             .attr("width", barwidth)
-            .attr("height", function(d){return yScale_RA(d.values['min_RA']);})
-            .attr("fill", function(d){return color(d.values['min_RA_league']);})
+            .attr("height", function(d){return yScale_RA(d.values['minRA']);})
+            .attr("fill", function(d){return color(d.values['minRA_league']);})
             .on("mouseover", function(d) {show_tooltip_RA(d);})
             .on("mouseout", hide_tooltip_RA);
 
-
-    chart_RA.selectAll(".median-marker")
-        .data(data_nested, function(d){return d['key'];}) //key is the year
-        .enter()
-        .append("rect")
-            .attr("class", "median-marker")
-            .attr("x", function(d){return xScale(d['key']);})
-            .attr("y", function(d){return yScale_RA(d.values['median_RA']);})
-            .attr("width", barwidth)
-            .attr("height", median_marker_height);
-
     //Add legend at the bottom
-    var legendtext = leagues.map(function(l){return "Team was from the " + l;}).concat(['Median Value']), //add "median" to legend label list
-        legendcolors = colors.concat(["#000000"]); //add black to legend color list for median marker
+    var legendtext = leagues.map(function(l){return "Team was from the " + l;}); //add more text to legend labels
 
     var legend = svg.append("g")
         .attr("class", "legend")
-        .attr("height", 70) //20px for each with 5px spacing
+        .attr("height", 45) //20px for each with 5px spacing
         .attr("width", 200)
-        .attr("transform", "translate(" + (width + margin.right - 200) + "," + (height + margin.bottom - 70)+ ")"); //bottom right corner
+        .attr("transform", "translate(" + (width + margin.right - 270) + "," + (height + margin.bottom - 45)+ ")"); //bottom right corner
 
     legend.selectAll("rect")
-        .data(legendcolors)
+        .data(colors)
         .enter()
         .append("rect")
         .attr("x", 0)
-        .attr("y", function(d, i) {
-            if(d=="#000000"){return i * 25 + 8;} //different pos for median rect b/c it is shorter
-            else {return i * 25;};})
+        .attr("y", function(d, i) {return i * 25;})
         .attr("width", 20)
-        .attr("height", function(d){
-            if(d=="#000000"){return median_marker_height;} //median rect is shorter
-            else {return 20;};})
+        .attr("height", function(d){return 20;})
         .attr("fill", function(d) {return d;});
 
     legend.selectAll("text")
