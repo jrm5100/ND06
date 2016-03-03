@@ -268,7 +268,7 @@ function draw(data) {
         .attr("y", height + 25)
         .attr("text-anchor", "middle")
         .attr("fill", "red")
-        .text("*short season due to strikes");
+        .text("Seasons in red were shortened due to strikes");
 
 };
 

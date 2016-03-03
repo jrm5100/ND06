@@ -25,6 +25,11 @@ My initial project with this data was far too exploratory.  I decided to focus o
   * This visualization presents a lot of information for the chart reader to explore, and it would be a great visualization for the end of a martini glass narrative. But for an explanatory chart, the chart reader really needs to show some interesting findings directly to the reader without the reader having to figure it out for him or herself.
     * I overhauled the visualization to focus on a comparison between world series winning teams and the rest of the league.  Is pitching or hitting more important?
 * Second Version
+  * "First comment is relying on color to denote shortened season. Could you add an asterisk next to the year in the graph axis? The next comment is ambiguity on median value. Is that across the entire entire mlb or for the respective leagues? This is probably going to far into the analysis but just listing the best offensive team and best defensive team don't really show the real impact of the DH, it might just show that a team spent more money on hitting than pitching. It would be interesting to see score differentials between the league."
+    * I tried adding an asterisk but it shifted alignment of the labels.  I found that changing the description of red text was a better solution.
+    * I decided to remove the median marker since it was distracting from the main narrative of the visualization.  I also updated the mouseover with information about the best team in each league so that the difference can be seen in detail if desired.
+  * "Having a DH has a significantly positive correlation with more runs, while it's not clear what "could" be contributing to the NL having better fielding numbers. You are making a hypothesis behind the offense, but not the defense."
+    * I updated the description to try and be more clear.
 
 
 # Resources
